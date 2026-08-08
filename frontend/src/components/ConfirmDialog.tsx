@@ -21,12 +21,12 @@ export default function ConfirmDialog({
 }: Props) {
   const confirmButtonClass =
     confirmVariant === 'danger'
-      ? 'rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50'
-      : 'rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50'
+      ? 'rounded-lg bg-red-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50'
+      : 'rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-xl border border-zinc-800 bg-zinc-900 p-6">
         <h3 className="mb-2 text-lg font-semibold text-zinc-100">{title}</h3>
         <p className="mb-6 text-sm text-zinc-400">{message}</p>
 
@@ -34,7 +34,7 @@ export default function ConfirmDialog({
           <button
             onClick={onCancel}
             disabled={loading}
-            className="rounded-md border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
+            className="rounded-lg border border-zinc-700 px-4 py-2.5 text-sm font-medium text-zinc-300 transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {cancelText}
           </button>

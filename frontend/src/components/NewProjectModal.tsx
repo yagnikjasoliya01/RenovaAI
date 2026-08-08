@@ -50,12 +50,12 @@ export default function NewProjectModal({ onClose }: Props) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. My house renovation"
-            className="mt-1 w-full rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-zinc-500"
+            className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3.5 py-2.5 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-500 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-500/20"
           />
         </div>
         <div>
           <label className="text-sm font-medium text-zinc-300">House photo</label>
-          <label className="mt-1 block cursor-pointer rounded-xl border-2 border-dashed border-zinc-700 p-4 text-center text-sm text-zinc-500 transition hover:border-zinc-500 hover:text-zinc-400">
+          <label className="mt-2 block cursor-pointer rounded-lg border-2 border-dashed border-zinc-700 p-4 text-center text-sm text-zinc-500 transition hover:border-zinc-500 hover:text-zinc-400">
             {file ? (
               <span className="font-medium text-zinc-200 block truncate px-2" title={file.name}>
                 {file.name}
@@ -72,18 +72,18 @@ export default function NewProjectModal({ onClose }: Props) {
           </label>
         </div>
         {error && <p className="text-sm text-red-400">{error}</p>}
-        <div className="flex gap-2">
+        <div className="flex gap-2 pt-1">
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 rounded-xl border border-zinc-700 py-2.5 text-sm font-medium text-zinc-200 transition hover:bg-zinc-800"
+            className="flex-1 rounded-lg border border-zinc-700 py-2.5 text-sm font-medium text-zinc-200 transition hover:bg-zinc-800"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={!file || loading}
-            className="flex-1 rounded-xl bg-zinc-100 py-2.5 text-sm font-medium text-zinc-950 transition hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex-1 rounded-lg bg-zinc-100 py-2.5 text-sm font-medium text-zinc-950 transition hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Creating...' : 'Create'}
           </button>

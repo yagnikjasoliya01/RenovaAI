@@ -61,7 +61,7 @@ export default function CostPanel() {
 
   return (
     <section className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <header className="flex h-10 shrink-0 items-center justify-between border-b border-zinc-800 px-4">
+      <header className="flex h-9 shrink-0 items-center justify-between border-b border-zinc-800 px-3">
         <h2 className="text-sm font-semibold text-zinc-100">Cost estimate</h2>
         <div className="flex items-center gap-2">
           {hasScale && (

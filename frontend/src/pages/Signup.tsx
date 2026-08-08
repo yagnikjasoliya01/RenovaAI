@@ -62,10 +62,10 @@ export default function Signup() {
 
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-lg border border-zinc-800 bg-zinc-900 p-6"
+          className="space-y-5 rounded-xl border border-zinc-800 bg-zinc-900 p-8"
         >
           {error && (
-            <div className="rounded-md bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
+            <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
               {error}
             </div>
           )}
@@ -83,7 +83,7 @@ export default function Signup() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="mt-1 w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               placeholder="johndoe"
             />
           </div>
@@ -101,7 +101,7 @@ export default function Signup() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               placeholder="you@example.com"
             />
           </div>
@@ -113,7 +113,7 @@ export default function Signup() {
             >
               Password
             </label>
-            <div className="relative mt-1">
+            <div className="relative mt-2">
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
@@ -121,13 +121,13 @@ export default function Signup() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 pr-10 text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3.5 py-2.5 pr-10 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition hover:text-zinc-300"
               >
                 {showPassword ? (
                   <svg
@@ -175,7 +175,7 @@ export default function Signup() {
             >
               Confirm Password
             </label>
-            <div className="relative mt-1">
+            <div className="relative mt-2">
               <input
                 id="confirmPassword"
                 type={showConfirmPassword ? 'text' : 'password'}
@@ -183,13 +183,13 @@ export default function Signup() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
-                className="w-full rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 pr-10 text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3.5 py-2.5 pr-10 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition hover:text-zinc-300"
               >
                 {showConfirmPassword ? (
                   <svg
@@ -233,14 +233,14 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:opacity-50"
+            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? 'Creating account...' : 'Sign Up'}
           </button>
 
           <p className="text-center text-sm text-zinc-400">
             Already have an account?{' '}
-            <Link to="/login" className="text-blue-400 hover:text-blue-300">
+            <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300">
               Sign in
             </Link>
           </p>

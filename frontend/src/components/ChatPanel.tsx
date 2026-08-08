@@ -161,7 +161,7 @@ export default function ChatPanel({ onClose, embedded = false }: Props) {
       } bg-zinc-900/70`}
     >
       {!embedded && (
-        <header className="flex h-10 shrink-0 items-center justify-between border-b border-zinc-800 px-4">
+        <header className="flex h-9 shrink-0 items-center justify-between border-b border-zinc-800 px-3">
           <div className="flex items-center gap-2">
             <BotAvatar />
             <h2 className="text-sm font-semibold text-zinc-100">
@@ -177,7 +177,7 @@ export default function ChatPanel({ onClose, embedded = false }: Props) {
               <button
                 onClick={onClose}
                 title="Close chat"
-                className="text-zinc-500 hover:text-zinc-200"
+                className="text-zinc-500 transition hover:text-zinc-200"
               >
                 ✕
               </button>

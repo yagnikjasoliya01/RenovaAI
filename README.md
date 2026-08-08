@@ -114,12 +114,4 @@ VITE_API_BASE_URL=http://127.0.0.1:8000
 
 - **Supabase:** [supabase.com](https://supabase.com) (free)
 - **Gemini:** [ai.google.dev](https://ai.google.dev) (free 60 req/min)
-- **OpenAI:** [platform.openai.com](https://platform.openai.com) (optional)
-
-## License
-
-MIT
-
----
-
-**Need help?** See [QUICKSTART.md](QUICKSTART.md) for detailed setup.
+- **OpenAI:** [platform.openai.com](https://platform.openai.com) 

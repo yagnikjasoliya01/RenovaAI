@@ -334,22 +334,21 @@ export default function CanvasEditor({
     }
 
     const m = measureRef.current
-    if (m.a && m.b) {
+    const mpt = m.b ?? m.hover
+    if (m.a && mpt) {
       ctx.save()
       ctx.translate(v.x, v.y)
       ctx.scale(v.scale, v.scale)
       ctx.beginPath()
       ctx.moveTo(m.a[0], m.a[1])
-      ctx.lineTo(m.b[0], m.b[1])
+      ctx.lineTo(mpt[0], mpt[1])
       ctx.lineWidth = 2 / v.scale
       ctx.strokeStyle = '#f59e0b'
       ctx.setLineDash([8 / v.scale, 6 / v.scale])
       ctx.stroke()
       ctx.setLineDash([])
       ctx.restore()
-    }
-    const mpt = m.b ?? m.hover
-    if (m.a && mpt) {
+      
       const [sx, sy] = toScreen(m.a)
       const [ex, ey] = toScreen(mpt)
       ctx.beginPath()
@@ -832,7 +831,7 @@ export default function CanvasEditor({
     : []
 
   const inspectorBody = (
-    <div className="mt-3 space-y-3">
+    <div className="mt-2 space-y-2">
       <div>
         <label className="text-xs font-medium text-zinc-500">Label</label>
         <select
@@ -853,8 +852,8 @@ export default function CanvasEditor({
         </select>
       </div>
       {isOpening(selectedRegion?.label) ? (
-        <div className="flex items-start gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-2.5 py-2 text-xs leading-relaxed text-zinc-400">
-          <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+        <div className="flex items-start gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 px-2.5 py-1.5 text-xs leading-relaxed text-zinc-400">
+          <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
           <span>
             Opening — no material needed. This area is subtracted from the
             surface around it.
@@ -869,7 +868,7 @@ export default function CanvasEditor({
                 <img
                   src={imageUrl(`/materials/thumbs/${selectedMaterial.thumbnail}`)}
                   alt={selectedMaterial.name}
-                  className="h-9 w-12 rounded object-cover"
+                  className="h-8 w-11 rounded object-cover"
                 />
                 <span className="min-w-0 flex-1 truncate text-sm text-zinc-100">
                   {selectedMaterial.name}
@@ -1157,13 +1156,13 @@ export default function CanvasEditor({
                     ✕
                   </button>
                 </div>
-                <div className="flex max-h-48 flex-col overflow-y-auto">
+                <div className="flex max-h-[140px] flex-col overflow-y-auto">
                   {regions.map(regionListItem)}
                 </div>
               </div>
             )}
             {selectedRegion && (
-              <div className="shrink-0 rounded-xl border border-zinc-800 bg-zinc-900/90 p-3 shadow-xl backdrop-blur">
+              <div className="shrink-0 rounded-xl border border-zinc-800 bg-zinc-900/90 p-2.5 shadow-xl backdrop-blur">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-zinc-100">
                     Region details
@@ -1201,7 +1200,7 @@ export default function CanvasEditor({
               </div>
             )}
             {selectedRegion && (
-              <div className="absolute right-3 top-3 w-60 rounded-xl border border-zinc-800 bg-zinc-900/90 p-3 shadow-xl backdrop-blur">
+              <div className="absolute right-3 top-3 w-60 rounded-xl border border-zinc-800 bg-zinc-900/90 p-2.5 shadow-xl backdrop-blur">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-zinc-100">
                     Region details

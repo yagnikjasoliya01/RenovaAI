@@ -113,12 +113,12 @@ export default function Dashboard() {
             </span>
             <div className="flex items-center gap-1.5">
               {generatedImage && (
-                <div className="mr-1 flex gap-0.5 rounded-md bg-zinc-800 p-0.5">
+                <div className="flex gap-0.5 rounded-md bg-zinc-800 p-0.5">
                   <button
                     onClick={() => setView('original')}
-                    className={`rounded px-2 py-0.5 text-xs transition ${
+                    className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                       view === 'original'
-                        ? 'bg-zinc-100 font-medium text-zinc-950'
+                        ? 'bg-zinc-100 text-zinc-950'
                         : 'text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -126,9 +126,9 @@ export default function Dashboard() {
                   </button>
                   <button
                     onClick={() => setView('generated')}
-                    className={`rounded px-2 py-0.5 text-xs transition ${
+                    className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                       view === 'generated'
-                        ? 'bg-zinc-100 font-medium text-zinc-950'
+                        ? 'bg-zinc-100 text-zinc-950'
                         : 'text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -136,9 +136,9 @@ export default function Dashboard() {
                   </button>
                   <button
                     onClick={() => setView('compare')}
-                    className={`rounded px-2 py-0.5 text-xs transition ${
+                    className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                       view === 'compare'
-                        ? 'bg-zinc-100 font-medium text-zinc-950'
+                        ? 'bg-zinc-100 text-zinc-950'
                         : 'text-zinc-400 hover:text-zinc-200'
                     }`}
                   >
@@ -148,7 +148,7 @@ export default function Dashboard() {
               )}
               <button
                 onClick={() => setChatOpen((v) => !v)}
-                className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:bg-zinc-800"
+                className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"
               >
                 {chatOpen ? 'Hide chat' : 'Chat'}
               </button>
@@ -167,13 +167,13 @@ export default function Dashboard() {
         {activeId && originalImage ? (
           <>
             {!expanded && (
-              <header className="flex h-10 shrink-0 items-center justify-between gap-4 border-b border-zinc-800 bg-zinc-900 px-4">
-                <div className="flex min-w-0 items-center gap-3">
+              <header className="flex h-9 shrink-0 items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-900 px-3">
+                <div className="flex min-w-0 flex-1 items-center gap-2.5">
                   {!sidebarOpen && (
                     <button
                       onClick={() => setSidebarOpen(true)}
                       title="Show project list"
-                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
                     >
                       <svg
                         width="15"
@@ -190,14 +190,14 @@ export default function Dashboard() {
                       </svg>
                     </button>
                   )}
-                  <h1 className="truncate text-sm font-semibold text-zinc-100">
+                  <h1 className="min-w-0 flex-1 truncate text-sm font-semibold text-zinc-100">
                     {projectName}
                   </h1>
                   {regions.length > 0 && (
                     <button
                       onClick={() => setRegionsOpen((v) => !v)}
                       title={regionsOpen ? 'Hide region list' : 'Show region list'}
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-medium transition ${
+                      className={`shrink-0 rounded-md px-2 py-1 text-[11px] font-medium transition ${
                         regionsOpen
                           ? 'bg-zinc-100 text-zinc-950'
                           : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
@@ -207,14 +207,14 @@ export default function Dashboard() {
                     </button>
                   )}
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 items-center gap-1.5">
                   {generatedImage && (
-                    <div className="flex gap-1 rounded-lg bg-zinc-800 p-1">
+                    <div className="flex gap-0.5 rounded-md bg-zinc-800 p-0.5">
                       <button
                         onClick={() => setView('original')}
-                        className={`rounded-md px-3 py-1 text-xs transition ${
+                        className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                           view === 'original'
-                            ? 'bg-zinc-100 font-medium text-zinc-950'
+                            ? 'bg-zinc-100 text-zinc-950'
                             : 'text-zinc-400 hover:text-zinc-200'
                         }`}
                       >
@@ -222,9 +222,9 @@ export default function Dashboard() {
                       </button>
                       <button
                         onClick={() => setView('generated')}
-                        className={`rounded-md px-3 py-1 text-xs transition ${
+                        className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                           view === 'generated'
-                            ? 'bg-zinc-100 font-medium text-zinc-950'
+                            ? 'bg-zinc-100 text-zinc-950'
                             : 'text-zinc-400 hover:text-zinc-200'
                         }`}
                       >
@@ -232,9 +232,9 @@ export default function Dashboard() {
                       </button>
                       <button
                         onClick={() => setView('compare')}
-                        className={`rounded-md px-3 py-1 text-xs transition ${
+                        className={`rounded px-2.5 py-1 text-xs font-medium transition ${
                           view === 'compare'
-                            ? 'bg-zinc-100 font-medium text-zinc-950'
+                            ? 'bg-zinc-100 text-zinc-950'
                             : 'text-zinc-400 hover:text-zinc-200'
                         }`}
                       >
@@ -244,14 +244,14 @@ export default function Dashboard() {
                   )}
                   <button
                     onClick={() => navigate(`/reports/${activeId}`)}
-                    className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:bg-zinc-800"
+                    className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"
                   >
                     Reports
                   </button>
                   <button
                     onClick={() => setExpanded(true)}
                     title="Focus mode"
-                    className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 transition hover:bg-zinc-800"
+                    className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"
                   >
                     ⤢
                   </button>

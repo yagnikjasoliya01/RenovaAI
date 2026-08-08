@@ -68,14 +68,14 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
       } bg-zinc-900/70`}
     >
       <div className="flex h-full w-[220px] flex-col">
-        <header className="flex h-10 shrink-0 items-center justify-between border-b border-zinc-800 px-3">
+        <header className="flex h-9 shrink-0 items-center justify-between border-b border-zinc-800 px-3">
           <h1 className="text-sm font-bold tracking-tight text-zinc-100">
             RenovaAI
           </h1>
           <button
             onClick={onClose}
             title="Collapse sidebar"
-            className="flex h-6 w-6 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
           >
             <svg
               width="14"
@@ -95,7 +95,7 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
         <div className="shrink-0 p-2">
           <button
             onClick={onNew}
-            className="w-full rounded-lg bg-zinc-100 py-1.5 text-sm font-medium text-zinc-950 transition hover:bg-zinc-300"
+            className="w-full rounded-lg bg-zinc-100 py-2 text-sm font-medium text-zinc-950 transition hover:bg-zinc-300"
           >
             + New Project
           </button>

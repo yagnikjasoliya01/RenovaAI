@@ -65,7 +65,8 @@ class SupabaseStorage:
         # 1. Has CORS enabled automatically
         # 2. Optimizes image delivery
         # 3. Works with Canvas without CORS configuration
-        public_url = f"{self.url}/storage/v1/render/image/public/{self.bucket_name}/{unique_filename}"
+        # format=origin & quality=100 force original quality (no WebP re-encode/loss)
+        public_url = f"{self.url}/storage/v1/render/image/public/{self.bucket_name}/{unique_filename}?format=origin&quality=100"
         return public_url
     
     def delete_image(self, url: str) -> bool:

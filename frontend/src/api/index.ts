@@ -1,4 +1,5 @@
 import { BASE, request, ApiError } from './client'
+export { BASE, request, ApiError, friendlyMessage } from './client'
 import type {
   ChatMessage,
   Estimate,

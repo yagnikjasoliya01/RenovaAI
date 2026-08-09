@@ -4,6 +4,8 @@ import {
   generateProject,
   generateReport,
   getProjectChat,
+  friendlyMessage,
+  ApiError,
   type SaveProjectBody,
 } from '../api'
 import { useStore } from '../store/useStore'
@@ -74,6 +76,14 @@ export default function ChatPanel({ onClose, embedded = false }: Props) {
     URL.revokeObjectURL(url)
   }
 
+  function errStatus(err: unknown): number {
+    return err instanceof ApiError ? err.status : -1
+  }
+
+  function errDetail(err: unknown): string {
+    return err instanceof Error ? err.message : ''
+  }
+
   async function send(e: FormEvent) {
     e.preventDefault()
     const text = input.trim()
@@ -92,9 +102,7 @@ export default function ChatPanel({ onClose, embedded = false }: Props) {
     } catch (err) {
       chatPush(activeId, {
         role: 'assistant',
-        content:
-          acc ||
-          (err instanceof Error ? err.message : 'Chat failed. Try again.'),
+        content: acc || friendlyMessage(errStatus(err), errDetail(err)),
       })
     } finally {
       setStreaming(false)
@@ -117,7 +125,7 @@ export default function ChatPanel({ onClose, embedded = false }: Props) {
     } catch (err) {
       chatPush(activeId!, {
         role: 'assistant',
-        content: `❌ Failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        content: friendlyMessage(errStatus(err), errDetail(err)),
       })
     } finally {
       setGenerating(false)
@@ -137,7 +145,7 @@ export default function ChatPanel({ onClose, embedded = false }: Props) {
     } catch (err) {
       chatPush(activeId!, {
         role: 'assistant',
-        content: `❌ Failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        content: friendlyMessage(errStatus(err), errDetail(err)),
       })
     } finally {
       setReporting(false)

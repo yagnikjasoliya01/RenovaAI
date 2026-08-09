@@ -10,6 +10,28 @@ export class ApiError extends Error {
   }
 }
 
+export function friendlyMessage(status: number, detail?: string): string {
+  if (status === 0) {
+    return 'Please check your internet connection and try again.'
+  }
+  if (status === 401) {
+    return 'Your session has expired. Please log in again.'
+  }
+  if (status === 422) {
+    return 'Something was missing in your request. Please try again.'
+  }
+  if (status === 502 || status === 503) {
+    return 'The service is temporarily unavailable. Please try again in a few minutes.'
+  }
+  if (status === 500) {
+    return 'Something went wrong on our side. Please try again.'
+  }
+  if (detail && detail.trim()) {
+    return detail
+  }
+  return 'Something went wrong. Please try again.'
+}
+
 export async function request<T>(
   path: string,
   init?: RequestInit,
@@ -56,6 +78,16 @@ export async function request<T>(
 export function imageUrl(path: string): string {
   // If path is already a full URL (Supabase Storage), return as-is
   if (path.startsWith('http://') || path.startsWith('https://')) {
+    // Supabase render endpoint re-encodes to WebP (~80% quality) unless told
+    // otherwise. Force original format & quality so images aren't degraded.
+    if (
+      path.includes('/storage/v1/render/image/') &&
+      !path.includes('format=') &&
+      !path.includes('quality=')
+    ) {
+      const sep = path.includes('?') ? '&' : '?'
+      return `${path}${sep}format=origin&quality=100`
+    }
     return path
   }
   

@@ -26,4 +26,4 @@ class ChatPayload(BaseModel):
 
 
 class GenerateImagePayload(BaseModel):
-    user_preferences: Optional[str] = Field(default="", max_length=500)
+    user_preferences: Optional[str] = Field(default="", max_length=2000)

@@ -3,6 +3,7 @@ import io
 import json
 import uuid
 from pathlib import Path
+from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
@@ -23,6 +24,28 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 ALLOWED = {"jpg", "jpeg", "png", "webp"}
 
 
+def _is_blurry(data: bytes) -> bool:
+    """Return True if the photo is heavily out of focus (very low edge variance)."""
+    try:
+        with Image.open(io.BytesIO(data)) as im:
+            im = im.convert("L")
+            im.thumbnail((128, 128))
+            w, h = im.size
+            px = im.load()
+        values = []
+        for y in range(1, h - 1):
+            for x in range(1, w - 1):
+                v = px[x - 1, y] + px[x + 1, y] + px[x, y - 1] + px[x, y + 1] - 4 * px[x, y]
+                values.append(v)
+        if not values:
+            return False
+        mean = sum(values) / len(values)
+        variance = sum((v - mean) ** 2 for v in values) / len(values)
+        return variance < 4
+    except Exception:
+        return False
+
+
 def _save_upload(file: UploadFile) -> str:
     """Save uploaded file to Supabase Storage (production) or local (fallback)."""
     ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else ""
@@ -38,8 +61,22 @@ def _save_upload(file: UploadFile) -> str:
     try:
         with Image.open(io.BytesIO(data)) as im:
             im.verify()
+        with Image.open(io.BytesIO(data)) as im:
+            width, height = im.size
     except Exception:
         raise HTTPException(400, "File is not a valid image")
+
+    # Quality gate: reject low-resolution and blurry photos
+    if min(width, height) < 480:
+        raise HTTPException(
+            400,
+            f"This photo is too small ({width}x{height}px). Please upload a clearer, higher-resolution photo of your house exterior.",
+        )
+    if _is_blurry(data):
+        raise HTTPException(
+            400,
+            "This photo looks blurry or out of focus. Please upload a sharp, clear photo of your house exterior.",
+        )
 
     # Use Supabase Storage (production) or local filesystem (development)
     if storage:
@@ -553,12 +590,13 @@ def chat_stream(
 
 @router.post("/{project_id}/generate")
 def generate(
-    payload: schemas.GenerateImagePayload,
+    payload: Optional[schemas.GenerateImagePayload] = None,
     p: Project = Depends(get_user_project),
     db: Session = Depends(get_db),
 ):
     project_id = p.id
-    user_prefs = payload.user_preferences or ""
+    # Tolerate requests without a body (older clients) and avoid parsing errors
+    user_prefs = (payload.user_preferences if payload else "") or ""
     
     # Save user request to chat
     user_msg = "Generate realistic renovation image with my selected materials"

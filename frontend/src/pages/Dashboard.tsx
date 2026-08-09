@@ -107,16 +107,16 @@ export default function Dashboard() {
           </p>
         )}
         {expanded && (
-          <div className="flex h-9 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-3">
-            <span className="text-xs font-semibold tracking-tight text-zinc-200">
+          <div className="flex h-8 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-2.5">
+            <span className="text-[11px] font-semibold tracking-tight text-zinc-200">
               RenovaAI <span className="text-zinc-500">· Focus</span>
             </span>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1">
               {generatedImage && (
-                <div className="flex gap-0.5 rounded-md bg-zinc-800 p-0.5">
+                <div className="flex gap-0.5 rounded bg-zinc-800 p-0.5">
                   <button
                     onClick={() => setView('original')}
-                    className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
                       view === 'original'
                         ? 'bg-zinc-100 text-zinc-950'
                         : 'text-zinc-400 hover:text-zinc-200'
@@ -126,7 +126,7 @@ export default function Dashboard() {
                   </button>
                   <button
                     onClick={() => setView('generated')}
-                    className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
                       view === 'generated'
                         ? 'bg-zinc-100 text-zinc-950'
                         : 'text-zinc-400 hover:text-zinc-200'
@@ -136,7 +136,7 @@ export default function Dashboard() {
                   </button>
                   <button
                     onClick={() => setView('compare')}
-                    className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
                       view === 'compare'
                         ? 'bg-zinc-100 text-zinc-950'
                         : 'text-zinc-400 hover:text-zinc-200'
@@ -148,18 +148,18 @@ export default function Dashboard() {
               )}
               <button
                 onClick={() => setChatOpen((v) => !v)}
-                className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"
+                className="rounded border border-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-200 transition hover:bg-zinc-800"
               >
-                {chatOpen ? 'Hide chat' : 'Chat'}
+                {chatOpen ? 'Hide' : 'Chat'}
               </button>
               <button
                 onClick={() => {
                   setExpanded(false)
                   setChatOpen(false)
                 }}
-                className="rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-950 transition hover:bg-zinc-300"
+                className="rounded bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-950 transition hover:bg-zinc-300"
               >
-                Exit focus
+                Exit
               </button>
             </div>
           </div>
@@ -167,17 +167,17 @@ export default function Dashboard() {
         {activeId && originalImage ? (
           <>
             {!expanded && (
-              <header className="flex h-9 shrink-0 items-center justify-between gap-3 border-b border-zinc-800 bg-zinc-900 px-3">
-                <div className="flex min-w-0 flex-1 items-center gap-2.5">
+              <header className="flex h-9 shrink-0 items-center justify-between gap-2 border-b border-zinc-800 bg-zinc-900 px-2.5">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
                   {!sidebarOpen && (
                     <button
                       onClick={() => setSidebarOpen(true)}
                       title="Show project list"
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
                     >
                       <svg
-                        width="15"
-                        height="15"
+                        width="13"
+                        height="13"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -190,14 +190,14 @@ export default function Dashboard() {
                       </svg>
                     </button>
                   )}
-                  <h1 className="min-w-0 flex-1 truncate text-sm font-semibold text-zinc-100">
+                  <h1 className="min-w-0 flex-1 truncate text-xs font-semibold text-zinc-100">
                     {projectName}
                   </h1>
                   {regions.length > 0 && (
                     <button
                       onClick={() => setRegionsOpen((v) => !v)}
                       title={regionsOpen ? 'Hide region list' : 'Show region list'}
-                      className={`shrink-0 rounded-md px-2 py-1 text-[11px] font-medium transition ${
+                      className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium transition ${
                         regionsOpen
                           ? 'bg-zinc-100 text-zinc-950'
                           : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
@@ -207,12 +207,12 @@ export default function Dashboard() {
                     </button>
                   )}
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
+                <div className="flex shrink-0 items-center gap-1">
                   {generatedImage && (
-                    <div className="flex gap-0.5 rounded-md bg-zinc-800 p-0.5">
+                    <div className="flex gap-0.5 rounded bg-zinc-800 p-0.5">
                       <button
                         onClick={() => setView('original')}
-                        className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                        className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
                           view === 'original'
                             ? 'bg-zinc-100 text-zinc-950'
                             : 'text-zinc-400 hover:text-zinc-200'
@@ -222,7 +222,7 @@ export default function Dashboard() {
                       </button>
                       <button
                         onClick={() => setView('generated')}
-                        className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                        className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
                           view === 'generated'
                             ? 'bg-zinc-100 text-zinc-950'
                             : 'text-zinc-400 hover:text-zinc-200'
@@ -232,7 +232,7 @@ export default function Dashboard() {
                       </button>
                       <button
                         onClick={() => setView('compare')}
-                        className={`rounded px-2.5 py-1 text-xs font-medium transition ${
+                        className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
                           view === 'compare'
                             ? 'bg-zinc-100 text-zinc-950'
                             : 'text-zinc-400 hover:text-zinc-200'
@@ -244,14 +244,14 @@ export default function Dashboard() {
                   )}
                   <button
                     onClick={() => navigate(`/reports/${activeId}`)}
-                    className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"
+                    className="rounded border border-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-200 transition hover:bg-zinc-800"
                   >
                     Reports
                   </button>
                   <button
                     onClick={() => setExpanded(true)}
                     title="Focus mode"
-                    className="rounded-md border border-zinc-700 px-2.5 py-1 text-xs font-medium text-zinc-200 transition hover:bg-zinc-800"
+                    className="rounded border border-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-200 transition hover:bg-zinc-800"
                   >
                     ⤢
                   </button>

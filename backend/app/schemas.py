@@ -23,3 +23,7 @@ class RenamePayload(BaseModel):
 
 class ChatPayload(BaseModel):
     message: str = Field(min_length=1, max_length=2000)
+
+
+class GenerateImagePayload(BaseModel):
+    user_preferences: Optional[str] = Field(default="", max_length=500)

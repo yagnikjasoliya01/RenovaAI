@@ -64,22 +64,22 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
   return (
     <aside
       className={`shrink-0 overflow-hidden transition-[width] duration-300 ease-in-out ${
-        open ? 'w-[220px] border-r border-zinc-800' : 'w-0'
+        open ? 'w-[200px] border-r border-zinc-800' : 'w-0'
       } bg-zinc-900/70`}
     >
-      <div className="flex h-full w-[220px] flex-col">
-        <header className="flex h-9 shrink-0 items-center justify-between border-b border-zinc-800 px-3">
+      <div className="flex h-full w-[200px] flex-col">
+        <header className="flex h-9 shrink-0 items-center justify-between border-b border-zinc-800 px-2.5">
           <h1 className="text-sm font-bold tracking-tight text-zinc-100">
             RenovaAI
           </h1>
           <button
             onClick={onClose}
             title="Collapse sidebar"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
+            className="flex h-6 w-6 items-center justify-center rounded text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
           >
             <svg
-              width="14"
-              height="14"
+              width="12"
+              height="12"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -92,17 +92,17 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
             </svg>
           </button>
         </header>
-        <div className="shrink-0 p-2">
+        <div className="flex h-10 shrink-0 items-center border-b border-zinc-800 px-1.5">
           <button
             onClick={onNew}
-            className="w-full rounded-lg bg-zinc-100 py-2 text-sm font-medium text-zinc-950 transition hover:bg-zinc-300"
+            className="flex h-8 w-full items-center justify-center rounded-lg bg-zinc-100 text-xs font-medium text-zinc-950 transition hover:bg-zinc-300"
           >
             + New Project
           </button>
         </div>
-        <nav className="flex-1 overflow-x-auto overflow-y-auto px-1.5 pb-3">
+        <nav className="flex-1 overflow-x-auto overflow-y-auto px-1.5 pb-2 pt-1.5">
         {projects.length === 0 && (
-          <p className="px-2 py-4 text-center text-xs text-zinc-500">
+          <p className="px-2 py-3 text-center text-[10px] text-zinc-500">
             No projects yet
           </p>
         )}
@@ -112,7 +112,7 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
             <div
               key={p.id}
               onClick={() => onOpen(p.id)}
-              className={`group mb-0.5 flex cursor-pointer items-center gap-1.5 rounded-md px-2 py-1.5 text-sm ${
+              className={`group mb-0.5 flex cursor-pointer items-center gap-1.5 rounded px-2 py-1 text-xs ${
                 active
                   ? 'bg-zinc-100 text-zinc-950'
                   : 'text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100'
@@ -129,7 +129,7 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
                     if (e.key === 'Escape') setEditingId(null)
                   }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full rounded bg-zinc-800 px-1.5 py-0.5 text-sm text-zinc-100 outline outline-1 outline-zinc-600"
+                  className="w-full rounded bg-zinc-800 px-1.5 py-0.5 text-xs text-zinc-100 outline outline-1 outline-zinc-600"
                 />
               ) : (
                 <>
@@ -141,15 +141,15 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
                       setEditingId(p.id)
                       setDraft(p.name)
                     }}
-                    className={`shrink-0 opacity-0 transition group-hover:opacity-100 ${
+                    className={`shrink-0 transition ${
                       active
                         ? 'text-zinc-500 hover:text-zinc-900'
                         : 'text-zinc-500 hover:text-zinc-100'
                     }`}
                   >
                     <svg
-                      width="13"
-                      height="13"
+                      width="11"
+                      height="11"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -166,15 +166,15 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
                       e.stopPropagation()
                       setDeleteTarget({ id: p.id, name: p.name })
                     }}
-                    className={`shrink-0 opacity-0 transition group-hover:opacity-100 ${
+                    className={`shrink-0 transition ${
                       active
                         ? 'text-zinc-500 hover:text-red-600'
                         : 'text-zinc-500 hover:text-red-400'
                     }`}
                   >
                     <svg
-                      width="13"
-                      height="13"
+                      width="11"
+                      height="11"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -196,29 +196,29 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
         })}
       </nav>
 
-      <div className="shrink-0 border-t border-zinc-800 p-2">
-        <div className="mb-2 flex items-center gap-2 px-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-700 text-xs font-medium text-zinc-100">
+      <div className="shrink-0 border-t border-zinc-800 p-1.5">
+        <div className="mb-1.5 flex items-center gap-1.5 px-1.5">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-700 text-[10px] font-medium text-zinc-100">
             {user?.email?.[0].toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="truncate text-xs text-zinc-400">
+            <p className="truncate text-[10px] text-zinc-400">
               {user?.user_metadata?.username || user?.email}
             </p>
           </div>
         </div>
-        <div className="mb-2">
+        <div className="mb-1.5">
           <button
             onClick={() => setShowRateEditor(true)}
-            className="w-full rounded-lg bg-zinc-800 py-1.5 text-sm font-medium text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-100"
+            className="w-full rounded-lg bg-zinc-800 py-1 text-xs font-medium text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-100"
             title="Edit Material Rates"
           >
-            💰 Material Rates
+            Material Rates
           </button>
         </div>
         <button
           onClick={handleSignOut}
-          className="w-full rounded-lg bg-zinc-800 py-1.5 text-sm font-medium text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-100"
+          className="w-full rounded-lg bg-zinc-800 py-1 text-xs font-medium text-zinc-300 transition hover:bg-zinc-700 hover:text-zinc-100"
         >
           Sign Out
         </button>

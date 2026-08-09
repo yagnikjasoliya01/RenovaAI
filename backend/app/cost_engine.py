@@ -4,7 +4,7 @@ from typing import Optional
 
 MATERIALS_PATH = Path(__file__).parent / "materials.json"
 
-OPENING_LABELS = {"window", "gate"}
+OPENING_LABELS = {"window", "door", "gate"}
 
 _materials_cache: Optional[list[dict]] = None
 
@@ -58,15 +58,33 @@ def polygon_contains(inner: list[list[float]], outer: list[list[float]]) -> bool
     return all(point_in_poly(pt, outer) for pt in inner)
 
 
+def polygons_overlap(a: list[list[float]], b: list[list[float]]) -> bool:
+    """True if any vertex of either polygon lies inside the other."""
+    if len(a) < 3 or len(b) < 3:
+        return False
+    return any(point_in_poly(pt, b) for pt in a) or any(
+        point_in_poly(pt, a) for pt in b
+    )
+
+
 def cutout_area_px(
     region: dict, all_regions: list[dict]
 ) -> float:
-    """Total pixel area of other regions fully contained in this one."""
+    """Pixel area subtracted from this region.
+
+    Openings (window/door/gate) subtract whenever they overlap the region;
+    non-opening regions subtract only when fully contained.
+    """
+    if region["label"] in OPENING_LABELS:
+        return 0.0
     total = 0.0
     for other in all_regions:
         if other is region:
             continue
-        if polygon_contains(other["points"], region["points"]):
+        if other["label"] in OPENING_LABELS:
+            if polygons_overlap(other["points"], region["points"]):
+                total += shoelace_area(other["points"])
+        elif polygon_contains(other["points"], region["points"]):
             total += shoelace_area(other["points"])
     return total
 

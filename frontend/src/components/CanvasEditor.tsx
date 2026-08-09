@@ -7,7 +7,7 @@ import {
   type PointerEvent,
   type WheelEvent,
 } from 'react'
-import { saveProject } from '../api'
+import { saveProject, type SaveProjectBody } from '../api'
 import { imageUrl } from '../api/client'
 import { useStore } from '../store/useStore'
 import type { Material, Region, RegionLabel } from '../types'
@@ -16,13 +16,14 @@ import {
   areaSqftEffective,
   centroid,
   distance,
+  findCutouts,
   isOpening,
   LABEL_TEXT,
   LABELS,
   pointInPolygon,
-  polygonInside,
   REGION_COLORS,
 } from '../utils/regionUtils'
+import { detectEdges, snapToEdge, type EdgeMap } from '../utils/edgeDetection'
 
 type Mode = 'select' | 'draw' | 'measure' | 'pan'
 
@@ -53,7 +54,7 @@ const HANDLE_RADIUS = 6
 
 const HELP_TEXT: Record<Mode, string> = {
   select: 'Click a region to edit it · drag white dots to reshape · Del to delete',
-  draw: 'Click to place points · click the first point or right-click to finish · Ctrl+Z removes the last point · Esc cancels',
+  draw: 'Click to place points (auto-snaps to edges) · click the first point or right-click to finish · Ctrl+Z removes the last point · Esc cancels',
   measure: 'Click two points of a known length, then type the measurement in feet',
   pan: 'Drag to move the view · scroll or use + / − to zoom',
 }
@@ -110,11 +111,14 @@ export default function CanvasEditor({
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>(
     'idle',
   )
+  const savingRef = useRef(false)
+  const pendingSaveRef = useRef<SaveProjectBody | null>(null)
 
   const drawRef = useRef<DrawState>({ points: [], hover: null })
   const measureRef = useRef<MeasureState>({ a: null, b: null, hover: null })
   const dragRef = useRef<DragState>(null)
   const spaceRef = useRef(false)
+  const edgeMapRef = useRef<EdgeMap | null>(null)
 
   const stateRef = useRef({
     view,
@@ -141,7 +145,25 @@ export default function CanvasEditor({
     if (!originalImage) return
     const img = new Image()
     img.crossOrigin = 'anonymous' // Enable CORS for Supabase Storage
-    img.onload = () => setImgSize({ w: img.naturalWidth, h: img.naturalHeight })
+    img.onload = () => {
+      setImgSize({ w: img.naturalWidth, h: img.naturalHeight })
+      
+      // Generate edge map for smart snap (always enabled)
+      try {
+        const tempCanvas = document.createElement('canvas')
+        tempCanvas.width = img.naturalWidth
+        tempCanvas.height = img.naturalHeight
+        const tempCtx = tempCanvas.getContext('2d')
+        if (tempCtx) {
+          tempCtx.drawImage(img, 0, 0)
+          const imageData = tempCtx.getImageData(0, 0, img.naturalWidth, img.naturalHeight)
+          edgeMapRef.current = detectEdges(imageData)
+        }
+      } catch (error) {
+        console.warn('Edge detection failed:', error)
+        edgeMapRef.current = null
+      }
+    }
     img.onerror = () => {
       console.error('Failed to load image:', imageUrl(originalImage))
       setImgSize({ w: 0, h: 0 })
@@ -246,9 +268,7 @@ export default function CanvasEditor({
         ? materials.find((m) => m.id === r.material_id)
         : null
       const color = mat?.color ?? REGION_COLORS[r.label as RegionLabel] ?? '#ffffff'
-      const cutouts = rs.filter(
-        (c) => c.id !== r.id && polygonInside(c.points, r.points),
-      )
+      const cutouts = findCutouts(r, rs)
       ctx.save()
       ctx.translate(v.x, v.y)
       ctx.scale(v.scale, v.scale)
@@ -330,6 +350,16 @@ export default function CanvasEditor({
         ctx.fillStyle = '#ffffff'
         ctx.fill()
       }
+      
+      // Draw snap radius indicator when hovering (subtle)
+      if (d.hover && edgeMapRef.current) {
+        ctx.beginPath()
+        ctx.arc(d.hover[0], d.hover[1], 10 / v.scale, 0, Math.PI * 2)
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)'
+        ctx.lineWidth = 1 / v.scale
+        ctx.stroke()
+      }
+      
       ctx.restore()
     }
 
@@ -457,7 +487,13 @@ export default function CanvasEditor({
   }, [])
 
   const addDrawPoint = useCallback((pt: [number, number]) => {
-    drawRef.current.points = [...drawRef.current.points, pt]
+    // Apply smart snap if edge map is available
+    let snappedPt = pt
+    if (edgeMapRef.current) {
+      snappedPt = snapToEdge(pt, edgeMapRef.current, 10)
+    }
+    
+    drawRef.current.points = [...drawRef.current.points, snappedPt]
     setDrawCount(drawRef.current.points.length)
     closeGuide()
   }, [closeGuide])
@@ -570,7 +606,13 @@ export default function CanvasEditor({
       return
     }
     if (drag?.kind === 'vertex') {
-      const img = clampToImage(screenToImage(sx, sy))
+      let img = clampToImage(screenToImage(sx, sy))
+      
+      // Apply smart snap
+      if (edgeMapRef.current) {
+        img = snapToEdge(img, edgeMapRef.current, 10)
+      }
+      
       const r = stateRef.current.regions.find((x) => x.id === drag.regionId)
       if (r) {
         const pts = [...r.points]
@@ -580,8 +622,12 @@ export default function CanvasEditor({
       return
     }
 
-    const img = clampToImage(screenToImage(sx, sy))
+    let img = clampToImage(screenToImage(sx, sy))
     if (m === 'draw') {
+      // Apply smart snap to hover preview
+      if (edgeMapRef.current) {
+        img = snapToEdge(img, edgeMapRef.current, 10)
+      }
       drawRef.current.hover = img
       draw()
     } else if (m === 'measure') {
@@ -689,35 +735,34 @@ export default function CanvasEditor({
     ? materials.find((m) => m.id === activeMaterial) ?? null
     : null
 
+  const runSave = useCallback(
+    async (id: number, body: SaveProjectBody) => {
+      if (savingRef.current) {
+        pendingSaveRef.current = body
+        return
+      }
+      savingRef.current = true
+      setSaveStatus('saving')
+      try {
+        await saveProject(id, body)
+        setSaveStatus('saved')
+      } catch {
+        setSaveStatus('error')
+      } finally {
+        savingRef.current = false
+        const next = pendingSaveRef.current
+        pendingSaveRef.current = null
+        if (next) runSave(id, next)
+      }
+    },
+    [],
+  )
+
   useEffect(() => {
     if (!activeId || !imgSize) return
     setSaveStatus('saving')
     const t = setTimeout(async () => {
-      try {
-        await saveProject(activeId, {
-          scale_ft: scaleFt,
-          scale_px: scalePx,
-          reference_note: null,
-          texture_scale: textureScale,
-          regions: regions.map((r) => ({
-            label: r.label,
-            points: r.points,
-            material_id: r.material_id ?? null,
-          })),
-        })
-        setSaveStatus('saved')
-      } catch {
-        setSaveStatus('error')
-      }
-    }, 800)
-    return () => clearTimeout(t)
-  }, [activeId, regions, scaleFt, scalePx, imgSize, textureScale])
-
-  async function saveNow() {
-    if (!activeId) return
-    setSaveStatus('saving')
-    try {
-      await saveProject(activeId, {
+      await runSave(activeId, {
         scale_ft: scaleFt,
         scale_px: scalePx,
         reference_note: null,
@@ -728,10 +773,23 @@ export default function CanvasEditor({
           material_id: r.material_id ?? null,
         })),
       })
-      setSaveStatus('saved')
-    } catch {
-      setSaveStatus('error')
-    }
+    }, 800)
+    return () => clearTimeout(t)
+  }, [activeId, regions, scaleFt, scalePx, imgSize, textureScale, runSave])
+
+  async function saveNow() {
+    if (!activeId) return
+    await runSave(activeId, {
+      scale_ft: scaleFt,
+      scale_px: scalePx,
+      reference_note: null,
+      texture_scale: textureScale,
+      regions: regions.map((r) => ({
+        label: r.label,
+        points: r.points,
+        material_id: r.material_id ?? null,
+      })),
+    })
   }
 
   function pickMaterial(mid: string | null) {
@@ -802,7 +860,7 @@ export default function CanvasEditor({
         onClick={() =>
           setSelectedId(r.id === selectedId ? null : (r.id ?? null))
         }
-        className={`flex items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition ${
+        className={`flex items-center gap-1.5 rounded-lg px-2 py-1 text-left text-xs transition ${
           r.id === selectedId
             ? 'bg-zinc-100 text-zinc-950'
             : 'text-zinc-300 hover:bg-zinc-800'
@@ -821,13 +879,7 @@ export default function CanvasEditor({
   }
 
   const selectedCutouts = selectedRegion
-    ? regions
-        .filter(
-          (c) =>
-            c.id !== selectedRegion.id &&
-            polygonInside(c.points, selectedRegion.points),
-        )
-        .map((c) => c.points)
+    ? findCutouts(selectedRegion, regions).map((c) => c.points)
     : []
 
   const inspectorBody = (
@@ -842,7 +894,7 @@ export default function CanvasEditor({
               label: e.target.value as RegionLabel,
             })
           }
-          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-2 py-1.5 text-sm text-zinc-100 outline-none focus:border-zinc-500"
+          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-2 py-1 text-xs text-zinc-100 outline-none focus:border-zinc-500"
         >
           {LABELS.map((l) => (
             <option key={l} value={l}>
@@ -862,15 +914,15 @@ export default function CanvasEditor({
       ) : (
         <div>
           <label className="text-xs font-medium text-zinc-500">Material</label>
-          <div className="mt-1 flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 p-1.5">
+          <div className="mt-1 flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 p-1">
             {selectedMaterial ? (
               <>
                 <img
                   src={imageUrl(`/materials/thumbs/${selectedMaterial.thumbnail}`)}
                   alt={selectedMaterial.name}
-                  className="h-8 w-11 rounded object-cover"
+                  className="h-7 w-10 rounded object-cover"
                 />
-                <span className="min-w-0 flex-1 truncate text-sm text-zinc-100">
+                <span className="min-w-0 flex-1 truncate text-xs text-zinc-100">
                   {selectedMaterial.name}
                 </span>
                 <button
@@ -894,7 +946,7 @@ export default function CanvasEditor({
           </div>
         </div>
       )}
-      <div className="flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between text-xs">
         <span className="text-zinc-500">Area</span>
         <span className="font-medium text-zinc-100">
           {selectedRegion &&
@@ -990,14 +1042,6 @@ export default function CanvasEditor({
               ))}
             </select>
           )}
-          {mode === 'draw' && drawCount > 0 && (
-            <button
-              onClick={finishDraw}
-              className="flex h-8 items-center rounded-lg bg-emerald-500/90 px-3 text-sm font-medium text-white transition hover:bg-emerald-500"
-            >
-              Finish ✓
-            </button>
-          )}
           {regions.length > 0 && (
             <button
               onClick={onToggleRegions}
@@ -1044,7 +1088,7 @@ export default function CanvasEditor({
         />
 
         <label
-          className="absolute left-1/2 top-3 z-20 flex h-8 -translate-x-1/2 cursor-pointer items-center gap-1.5 rounded-full border border-zinc-700/80 bg-zinc-900/90 px-3 text-xs text-zinc-300 shadow-lg backdrop-blur"
+          className="absolute left-1/2 top-3 z-20 flex h-7 -translate-x-1/2 cursor-pointer items-center gap-1.5 rounded-full border border-zinc-700/80 bg-zinc-900/90 px-2.5 text-[11px] text-zinc-300 shadow-lg backdrop-blur"
           title="Material pattern size — smaller repeats more, bigger repeats less"
         >
           <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
@@ -1057,9 +1101,9 @@ export default function CanvasEditor({
             step="0.05"
             value={textureScale}
             onChange={(e) => setTextureScale(parseFloat(e.target.value))}
-            className="h-1 w-24 cursor-pointer accent-zinc-100"
+            className="h-1 w-20 cursor-pointer accent-zinc-100"
           />
-          <span className="w-9 text-right tabular-nums text-zinc-400">
+          <span className="w-7 text-right tabular-nums text-zinc-400">
             {Math.round(textureScale * 100)}%
           </span>
           <button
@@ -1228,7 +1272,7 @@ export default function CanvasEditor({
                 <button
                   onClick={() => pickMaterial(null)}
                   title="No material"
-                  className={`mb-1.5 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-zinc-600 py-1.5 text-xs transition ${
+                  className={`mb-1 flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-zinc-600 py-1 text-xs transition ${
                     paletteActive === null
                       ? 'bg-zinc-100 text-zinc-950'
                       : 'text-zinc-300 hover:bg-zinc-800'
@@ -1236,13 +1280,13 @@ export default function CanvasEditor({
                 >
                   ∅ No material
                 </button>
-                <div className="grid grid-cols-2 gap-1.5">
+                <div className="grid grid-cols-2 gap-1">
                   {materials.map((m) => (
                     <button
                       key={m.id}
                       onClick={() => pickMaterial(m.id)}
                       title={m.name}
-                      className={`flex flex-col items-center gap-1 rounded-lg p-1 transition ${
+                      className={`flex flex-col items-center gap-0.5 rounded-lg p-0.5 transition ${
                         paletteActive === m.id
                           ? 'bg-zinc-100 text-zinc-950 ring-2 ring-zinc-100'
                           : 'text-zinc-300 hover:bg-zinc-800'
@@ -1251,7 +1295,7 @@ export default function CanvasEditor({
                       <img
                         src={imageUrl(`/materials/thumbs/${m.thumbnail}`)}
                         alt={m.name}
-                        className="h-12 w-full rounded object-cover"
+                        className="h-10 w-full rounded object-cover"
                       />
                       <span className="w-full truncate text-center text-[10px] leading-tight">
                         {m.name}
@@ -1291,42 +1335,42 @@ export default function CanvasEditor({
           <button
             onClick={() => zoomAt(1.3)}
             title="Zoom in"
-            className="h-8 w-8 rounded-lg text-zinc-300 hover:bg-zinc-800"
+            className="h-7 w-7 rounded-lg text-zinc-300 hover:bg-zinc-800"
           >
             +
           </button>
           <button
             onClick={fitView}
             title="Fit to screen"
-            className="h-8 w-8 rounded-lg text-sm text-zinc-300 hover:bg-zinc-800"
+            className="h-7 w-7 rounded-lg text-xs text-zinc-300 hover:bg-zinc-800"
           >
             ⛶
           </button>
           <button
             onClick={() => zoomAt(1 / 1.3)}
             title="Zoom out"
-            className="h-8 w-8 rounded-lg text-zinc-300 hover:bg-zinc-800"
+            className="h-7 w-7 rounded-lg text-zinc-300 hover:bg-zinc-800"
           >
             −
           </button>
         </div>
       </div>
 
-      <div className="flex h-8 shrink-0 items-center justify-between gap-3 border-t border-zinc-800 bg-zinc-900/60 px-3 text-xs">
+      <div className="flex h-6 shrink-0 items-center justify-between gap-2 border-t border-zinc-800 bg-zinc-900/60 px-2.5 text-[11px]">
         <p className="min-w-0 truncate text-zinc-400">{HELP_TEXT[mode]}</p>
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2">
           {scaleFt && scalePx && (
-            <span className="flex items-center gap-1.5 text-zinc-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            <span className="flex items-center gap-1 text-zinc-400">
+              <span className="h-1 w-1 rounded-full bg-amber-400" />
               Reference: {scaleFt} ft over {scalePx.toFixed(0)} px
             </span>
           )}
           {!selectedRegion && brushMaterial && (
-            <span className="flex items-center gap-1.5 text-zinc-400">
+            <span className="flex items-center gap-1 text-zinc-400">
               <img
                 src={imageUrl(`/materials/thumbs/${brushMaterial.thumbnail}`)}
                 alt={brushMaterial.name}
-                className="h-5 w-7 rounded object-cover"
+                className="h-4 w-6 rounded object-cover"
               />
               Brush: {brushMaterial.name}
             </span>

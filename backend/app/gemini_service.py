@@ -22,23 +22,37 @@ PROJECT CONTEXT:
 
 USER: {message}"""
 
-GENERATE_PROMPT_TEMPLATE = """You are an expert architectural visualization AI. Transform this house exterior photo to show a realistic renovation based on the homeowner's material selections below.
+GENERATE_PROMPT_TEMPLATE = """You are an expert architectural visualization AI. Transform this ENTIRE house exterior photo to show a complete, realistic renovation.
 
-MATERIAL SELECTIONS (use as guidance):
+SELECTED MATERIALS FOR SPECIFIC AREAS:
 {materials}
 
-IMPORTANT INSTRUCTIONS:
-1. PRESERVE the exact building structure, dimensions, windows, doors, and architectural features
-2. Apply the specified materials realistically with proper textures, lighting, and shadows
-3. You have CREATIVE FREEDOM to:
-   - Adjust material colors/tones for aesthetic harmony
-   - Add complementary accents or trim colors
-   - Enhance lighting and depth for photorealism
-   - Suggest improvements that elevate the design
-4. Maintain the original photo's perspective, lighting conditions, and surroundings
-5. Ensure the result looks like a professional architectural rendering - realistic, high-quality, and achievable
+{user_preferences}
 
-Generate a photorealistic renovation that the homeowner can show to contractors."""
+CRITICAL INSTRUCTIONS:
+1. RENOVATE THE ENTIRE HOUSE - not just the areas with materials selected
+   - The homeowner selected materials for some specific areas (walls, balconies, etc.)
+   - Apply these materials to those areas as specified
+   - For unmarked/untagged areas: intelligently extend the design to create a cohesive, beautiful whole-house renovation
+   - Match colors, styles, and aesthetics across the entire building
+
+2. PRESERVE exact building structure, dimensions, windows, doors, architectural features
+
+3. CREATIVE INTELLIGENCE:
+   - Use selected materials as the design foundation
+   - Extend color palette and style to entire facade
+   - Add complementary trim, accents, or finishing touches
+   - Ensure visual harmony between tagged and untagged areas
+   - Make the entire house look professionally designed and coordinated
+
+4. REALISM:
+   - Apply proper textures, lighting, shadows
+   - Maintain original photo's perspective and lighting conditions
+   - Create a professional architectural rendering quality result
+
+5. RESULT: A complete, photorealistic whole-house renovation that looks achievable and impressive - ready to show contractors.
+
+Generate the FULL HOUSE renovation now."""
 
 COST_PROMPT = """You are the cost analyst for "RenovaAI", a home-exterior renovation planning tool.
 The homeowner uploaded a photo, tagged regions (wall, window, balcony, ...) and our measurement engine
@@ -111,7 +125,7 @@ def chat_stream(context: str, message: str):
             yield text
 
 
-def generate_renovation(image_path: str, materials_summary: str) -> Optional[str]:
+def generate_renovation(image_path: str, materials_summary: str, user_preferences: str = "") -> Optional[str]:
     """Generate renovated image. Returns Supabase URL or local path."""
     from app.supabase_storage import storage
     import io
@@ -135,7 +149,16 @@ def generate_renovation(image_path: str, materials_summary: str) -> Optional[str
             return None
 
     ref = client.files.upload(file=path)
-    prompt = GENERATE_PROMPT_TEMPLATE.format(materials=materials_summary)
+    
+    # Add user preferences to prompt if provided
+    preferences_text = ""
+    if user_preferences and user_preferences.strip():
+        preferences_text = f"\nUSER'S DESIGN PREFERENCES:\n{user_preferences.strip()}\n(Consider these preferences while maintaining the material selections above)"
+    
+    prompt = GENERATE_PROMPT_TEMPLATE.format(
+        materials=materials_summary,
+        user_preferences=preferences_text
+    )
 
     from google.genai import types
 

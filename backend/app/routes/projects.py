@@ -176,11 +176,20 @@ def save_project(
     p: Project = Depends(get_user_project),
     db: Session = Depends(get_db),
 ):
+    # Lock the project row so concurrent save requests serialize. Without this,
+    # two overlapping saves (autosave + manual save) each do DELETE+INSERT and
+    # can leave BOTH batches in the DB, duplicating every region.
+    locked = (
+        db.query(Project)
+        .filter(Project.id == p.id)
+        .with_for_update()
+        .one()
+    )
 
-    p.scale_ft = payload.scale_ft
-    p.scale_px = payload.scale_px
-    p.reference_note = payload.reference_note
-    p.texture_scale = payload.texture_scale
+    locked.scale_ft = payload.scale_ft
+    locked.scale_px = payload.scale_px
+    locked.reference_note = payload.reference_note
+    locked.texture_scale = payload.texture_scale
 
     db.query(Region).filter(Region.project_id == project_id).delete()
     for r in payload.regions:
@@ -544,26 +553,31 @@ def chat_stream(
 
 @router.post("/{project_id}/generate")
 def generate(
+    payload: schemas.GenerateImagePayload,
     p: Project = Depends(get_user_project),
     db: Session = Depends(get_db),
 ):
     project_id = p.id
+    user_prefs = payload.user_preferences or ""
     
     # Save user request to chat
-    _persist_msg(db, project_id, "user", "Generate realistic renovation image with my selected materials")
+    user_msg = "Generate realistic renovation image with my selected materials"
+    if user_prefs.strip():
+        user_msg += f"\n\nMy design preferences: {user_prefs.strip()}"
+    _persist_msg(db, project_id, "user", user_msg)
     
     summary = _materials_summary(p)
     if not summary:
         raise HTTPException(400, "Tag regions and apply materials first")
     try:
-        out = openai_service.generate_renovation(p.original_image, summary)
+        out = openai_service.generate_renovation(p.original_image, summary, user_prefs)
     except RuntimeError:
         out = None  # no OpenAI key configured - fall through to Gemini
     except Exception as e:
         raise HTTPException(503, f"OpenAI image generation failed: {e}")
     if out is None:
         try:
-            out = gemini_service.generate_renovation(p.original_image, summary)
+            out = gemini_service.generate_renovation(p.original_image, summary, user_prefs)
         except RuntimeError as e:
             raise HTTPException(503, f"Image generation unavailable: {e}")
         except Exception as e:

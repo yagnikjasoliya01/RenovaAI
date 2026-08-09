@@ -135,9 +135,11 @@ export async function chatProjectStream(
   }
 }
 
-export const generateProject = (id: number) =>
+export const generateProject = (id: number, userPreferences: string = '') =>
   request<{ generated_image: string }>(`/api/projects/${id}/generate`, {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_preferences: userPreferences }),
   })
 
 export const generateReport = (id: number, body: SaveProjectBody) =>

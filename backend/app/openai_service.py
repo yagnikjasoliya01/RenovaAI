@@ -15,7 +15,7 @@ def _client():
     return OpenAI(api_key=settings.openai_api_key)
 
 
-def generate_renovation(image_path: str, materials_summary: str) -> Optional[str]:
+def generate_renovation(image_path: str, materials_summary: str, user_preferences: str = "") -> Optional[str]:
     """Edit the photo via OpenAI gpt-image-1. Returns Supabase URL or local path."""
     from app.supabase_storage import storage
     import base64
@@ -40,11 +40,13 @@ def generate_renovation(image_path: str, materials_summary: str) -> Optional[str
             return None
 
     prompt = (
-        "Edit this photo of the house exterior to show the following renovation. "
-        "Apply the materials realistically and PRESERVE the exact same building "
-        "structure, window positions and proportions. Only change surface "
-        "finishes/colors as listed:\n" + materials_summary
+        "Renovate the ENTIRE house exterior in this photo - not just specific areas. "
+        "Apply the selected materials to tagged areas and intelligently extend the design to the whole house for a cohesive look. "
+        "PRESERVE exact building structure, windows, doors. Materials selected:\n" + materials_summary
     )
+    
+    if user_preferences and user_preferences.strip():
+        prompt += f"\n\nUser's design preferences: {user_preferences.strip()}"
 
     with path.open("rb") as f:
         resp = client.images.edit(

@@ -75,6 +75,7 @@ export interface Estimate {
 export type RegionLabel =
   | 'wall'
   | 'window'
+  | 'door'
   | 'balcony'
   | 'pillar'
   | 'parapet'

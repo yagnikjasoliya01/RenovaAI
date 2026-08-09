@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, JSON, DateTime
+from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, JSON, DateTime, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID, TIMESTAMP
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -70,5 +70,5 @@ class UserMaterialRate(Base):
     
     # Composite unique constraint: one custom rate per user per material
     __table_args__ = (
-        {"schema": None},
+        UniqueConstraint('user_id', 'material_id', name='uq_user_material'),
     )

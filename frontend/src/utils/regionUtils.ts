@@ -1,8 +1,9 @@
-import type { RegionLabel } from '../types'
+import type { Region, RegionLabel } from '../types'
 
 export const LABELS: RegionLabel[] = [
   'wall',
   'window',
+  'door',
   'balcony',
   'pillar',
   'parapet',
@@ -14,6 +15,7 @@ export const LABELS: RegionLabel[] = [
 export const LABEL_TEXT: Record<RegionLabel, string> = {
   wall: 'Wall',
   window: 'Window',
+  door: 'Door',
   balcony: 'Balcony',
   pillar: 'Pillar',
   parapet: 'Parapet',
@@ -22,7 +24,7 @@ export const LABEL_TEXT: Record<RegionLabel, string> = {
   floor: 'Floor',
 }
 
-const OPENING_LABELS = new Set<RegionLabel>(['window', 'gate'])
+const OPENING_LABELS = new Set<RegionLabel>(['window', 'door', 'gate'])
 
 export const isOpening = (label: string | null | undefined): boolean =>
   !!label && OPENING_LABELS.has(label as RegionLabel)
@@ -30,6 +32,7 @@ export const isOpening = (label: string | null | undefined): boolean =>
 export const REGION_COLORS: Record<RegionLabel, string> = {
   wall: '#3b82f6',
   window: '#22c55e',
+  door: '#84cc16',
   balcony: '#f59e0b',
   pillar: '#a855f7',
   parapet: '#ef4444',
@@ -87,6 +90,28 @@ export function polygonInside(
 ): boolean {
   if (inner.length < 3) return false
   return inner.every((pt) => pointInPolygon(pt, outer))
+}
+
+export function polygonsOverlap(
+  a: [number, number][],
+  b: [number, number][],
+): boolean {
+  if (a.length < 3 || b.length < 3) return false
+  return (
+    a.some((pt) => pointInPolygon(pt, b)) ||
+    b.some((pt) => pointInPolygon(pt, a))
+  )
+}
+
+export function findCutouts(region: Region, all: Region[]): Region[] {
+  return all.filter((c) => {
+    if (c.id === region.id) return false
+    if (isOpening(region.label)) return false
+    if (isOpening(c.label)) {
+      return polygonsOverlap(c.points, region.points)
+    }
+    return polygonInside(c.points, region.points)
+  })
 }
 
 function effectiveAreaPx(

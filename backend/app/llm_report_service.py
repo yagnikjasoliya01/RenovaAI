@@ -11,11 +11,20 @@ from app.core.config import settings
 
 
 def image_to_data_url(image_path: str) -> str:
-    """Convert image file to base64 data URL."""
+    """Convert image file to base64 data URL. Supports local files and remote URLs."""
     from PIL import Image
     import io
-    
-    img = Image.open(image_path).convert("RGB")
+    import httpx
+
+    if image_path.startswith("http://") or image_path.startswith("https://"):
+        with httpx.Client() as client:
+            response = client.get(image_path, timeout=30.0)
+            response.raise_for_status()
+        image_source = io.BytesIO(response.content)
+    else:
+        image_source = image_path
+
+    img = Image.open(image_source).convert("RGB")
     buf = io.BytesIO()
     img.save(buf, format="JPEG", quality=85)
     return "data:image/jpeg;base64," + base64.b64encode(buf.getvalue()).decode()

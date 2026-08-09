@@ -337,7 +337,10 @@ def report(
         )
     
     # Convert images to data URLs for frontend preview
-    original_image_url = llm_report_service.image_to_data_url(p.original_image)
+    try:
+        original_image_url = llm_report_service.image_to_data_url(p.original_image)
+    except Exception:
+        original_image_url = None
     generated_image_url = None
     if p.generated_image:
         try:

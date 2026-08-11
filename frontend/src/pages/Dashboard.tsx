@@ -113,14 +113,26 @@ export default function Dashboard() {
     <div
       className={`grid h-screen overflow-hidden ${
         expanded ? 'grid-cols-1' : 'grid-cols-[auto_1fr_360px]'
-      } bg-zinc-950 text-zinc-100 relative`}
+      } relative`}
+      style={{ backgroundColor: '#0a0a0a', color: '#ffffff', fontFamily: 'Geist, Inter, sans-serif' }}
     >
       {/* Full-page blur loader when switching projects */}
       {projectLoading && id && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
+        <div 
+          className="absolute inset-0 z-50 flex items-center justify-center backdrop-blur-sm"
+          style={{ backgroundColor: 'rgba(10, 10, 10, 0.8)' }}
+        >
           <div className="text-center">
-            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500 mx-auto" />
-            <p className="text-zinc-300 text-sm font-medium">Loading project...</p>
+            <div 
+              className="mb-4 h-12 w-12 animate-spin rounded-full border-4 mx-auto" 
+              style={{ 
+                borderColor: '#2a2a2a',
+                borderTopColor: '#ffffff'
+              }}
+            />
+            <p style={{ color: '#a1a1a1', fontSize: '14px', fontWeight: 500, fontFamily: 'Geist, Inter, sans-serif' }}>
+              Loading project...
+            </p>
           </div>
         </div>
       )}
@@ -138,45 +150,92 @@ export default function Dashboard() {
 
       <main className="flex min-w-0 flex-col overflow-hidden">
         {error && (
-          <p className="border-b border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
+          <p 
+            className="p-3 text-sm"
+            style={{
+              borderBottom: '1px solid rgba(239, 68, 68, 0.2)',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              color: '#ff6b6b',
+              fontFamily: 'Geist, Inter, sans-serif'
+            }}
+          >
             {error}
           </p>
         )}
         {expanded && (
-          <div className="flex h-8 shrink-0 items-center justify-between border-b border-zinc-800 bg-zinc-900 px-2.5">
-            <span className="text-[11px] font-semibold tracking-tight text-zinc-200">
-              RenovaAI <span className="text-zinc-500">· Focus</span>
+          <div 
+            className="flex h-8 shrink-0 items-center justify-between px-2.5"
+            style={{ 
+              borderBottom: '1px solid #1a1a1a',
+              backgroundColor: '#0f0f0f'
+            }}
+          >
+            <span 
+              className="text-[11px] font-semibold tracking-tight"
+              style={{ 
+                color: '#ffffff',
+                fontFamily: 'Geist, Inter, sans-serif'
+              }}
+            >
+              RenovaAI <span style={{ color: '#6a6a6a' }}>· Focus</span>
             </span>
             <div className="flex items-center gap-1">
               {generatedImage && (
-                <div className="flex gap-0.5 rounded bg-zinc-800 p-0.5">
+                <div 
+                  className="flex gap-0.5 p-0.5"
+                  style={{ borderRadius: '8px', backgroundColor: '#1a1a1a' }}
+                >
                   <button
                     onClick={() => setView('original')}
-                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
-                      view === 'original'
-                        ? 'bg-zinc-100 text-zinc-950'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    }`}
+                    className="px-2 py-0.5 text-[11px] font-medium transition"
+                    style={{
+                      borderRadius: '6px',
+                      backgroundColor: view === 'original' ? '#ffffff' : 'transparent',
+                      color: view === 'original' ? '#0a0a0a' : '#8f8f8f',
+                      fontFamily: 'Geist, Inter, sans-serif'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (view !== 'original') e.currentTarget.style.color = '#ffffff'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (view !== 'original') e.currentTarget.style.color = '#8f8f8f'
+                    }}
                   >
                     Original
                   </button>
                   <button
                     onClick={() => setView('generated')}
-                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
-                      view === 'generated'
-                        ? 'bg-zinc-100 text-zinc-950'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    }`}
+                    className="px-2 py-0.5 text-[11px] font-medium transition"
+                    style={{
+                      borderRadius: '6px',
+                      backgroundColor: view === 'generated' ? '#ffffff' : 'transparent',
+                      color: view === 'generated' ? '#0a0a0a' : '#8f8f8f',
+                      fontFamily: 'Geist, Inter, sans-serif'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (view !== 'generated') e.currentTarget.style.color = '#ffffff'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (view !== 'generated') e.currentTarget.style.color = '#8f8f8f'
+                    }}
                   >
                     AI Renovated
                   </button>
                   <button
                     onClick={() => setView('compare')}
-                    className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
-                      view === 'compare'
-                        ? 'bg-zinc-100 text-zinc-950'
-                        : 'text-zinc-400 hover:text-zinc-200'
-                    }`}
+                    className="px-2 py-0.5 text-[11px] font-medium transition"
+                    style={{
+                      borderRadius: '6px',
+                      backgroundColor: view === 'compare' ? '#ffffff' : 'transparent',
+                      color: view === 'compare' ? '#0a0a0a' : '#8f8f8f',
+                      fontFamily: 'Geist, Inter, sans-serif'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (view !== 'compare') e.currentTarget.style.color = '#ffffff'
+                    }}
+                    onMouseLeave={(e) => {
+                      if (view !== 'compare') e.currentTarget.style.color = '#8f8f8f'
+                    }}
                   >
                     Compare
                   </button>
@@ -184,7 +243,16 @@ export default function Dashboard() {
               )}
               <button
                 onClick={() => setChatOpen((v) => !v)}
-                className="rounded border border-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-200 transition hover:bg-zinc-800"
+                className="px-2 py-0.5 text-[11px] font-medium transition"
+                style={{
+                  borderRadius: '6px',
+                  border: '1px solid #2a2a2a',
+                  color: '#ffffff',
+                  backgroundColor: 'transparent',
+                  fontFamily: 'Geist, Inter, sans-serif'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1a1a1a'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 {chatOpen ? 'Hide' : 'Chat'}
               </button>
@@ -193,7 +261,15 @@ export default function Dashboard() {
                   setExpanded(false)
                   setChatOpen(false)
                 }}
-                className="rounded bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-950 transition hover:bg-zinc-300"
+                className="px-2 py-0.5 text-[11px] font-medium transition"
+                style={{
+                  borderRadius: '6px',
+                  backgroundColor: '#ffffff',
+                  color: '#0a0a0a',
+                  fontFamily: 'Geist, Inter, sans-serif'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e5e5e5'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
               >
                 Exit
               </button>
@@ -203,13 +279,31 @@ export default function Dashboard() {
         {activeId && originalImage ? (
           <>
             {!expanded && (
-              <header className="flex h-9 shrink-0 items-center justify-between gap-2 border-b border-zinc-800 bg-zinc-900 px-2.5">
+              <header 
+                className="flex h-9 shrink-0 items-center justify-between gap-2 px-2.5"
+                style={{
+                  borderBottom: '1px solid #1a1a1a',
+                  backgroundColor: '#0f0f0f'
+                }}
+              >
                 <div className="flex min-w-0 flex-1 items-center gap-2">
                   {!sidebarOpen && (
                     <button
                       onClick={() => setSidebarOpen(true)}
                       title="Show project list"
-                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
+                      className="flex h-6 w-6 shrink-0 items-center justify-center transition"
+                      style={{
+                        borderRadius: '6px',
+                        color: '#8f8f8f'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#1a1a1a'
+                        e.currentTarget.style.color = '#ffffff'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent'
+                        e.currentTarget.style.color = '#8f8f8f'
+                      }}
                     >
                       <svg
                         width="13"
@@ -226,18 +320,35 @@ export default function Dashboard() {
                       </svg>
                     </button>
                   )}
-                  <h1 className="min-w-0 flex-1 truncate text-xs font-semibold text-zinc-100">
+                  <h1 
+                    className="min-w-0 flex-1 truncate text-xs font-semibold"
+                    style={{ color: '#ffffff', fontFamily: 'Geist, Inter, sans-serif' }}
+                  >
                     {projectName}
                   </h1>
                   {regions.length > 0 && (
                     <button
                       onClick={() => setRegionsOpen((v) => !v)}
                       title={regionsOpen ? 'Hide region list' : 'Show region list'}
-                      className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium transition ${
-                        regionsOpen
-                          ? 'bg-zinc-100 text-zinc-950'
-                          : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-200'
-                      }`}
+                      className="shrink-0 px-1.5 py-0.5 text-[10px] font-medium transition"
+                      style={{
+                        borderRadius: '6px',
+                        backgroundColor: regionsOpen ? '#ffffff' : '#1a1a1a',
+                        color: regionsOpen ? '#0a0a0a' : '#8f8f8f',
+                        fontFamily: 'Geist, Inter, sans-serif'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!regionsOpen) {
+                          e.currentTarget.style.backgroundColor = '#2a2a2a'
+                          e.currentTarget.style.color = '#ffffff'
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!regionsOpen) {
+                          e.currentTarget.style.backgroundColor = '#1a1a1a'
+                          e.currentTarget.style.color = '#8f8f8f'
+                        }
+                      }}
                     >
                       {regions.length} region{regions.length === 1 ? '' : 's'}
                     </button>
@@ -245,34 +356,61 @@ export default function Dashboard() {
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
                   {generatedImage && (
-                    <div className="flex gap-0.5 rounded bg-zinc-800 p-0.5">
+                    <div 
+                      className="flex gap-0.5 p-0.5"
+                      style={{ borderRadius: '8px', backgroundColor: '#1a1a1a' }}
+                    >
                       <button
                         onClick={() => setView('original')}
-                        className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
-                          view === 'original'
-                            ? 'bg-zinc-100 text-zinc-950'
-                            : 'text-zinc-400 hover:text-zinc-200'
-                        }`}
+                        className="px-2 py-0.5 text-[11px] font-medium transition"
+                        style={{
+                          borderRadius: '6px',
+                          backgroundColor: view === 'original' ? '#ffffff' : 'transparent',
+                          color: view === 'original' ? '#0a0a0a' : '#8f8f8f',
+                          fontFamily: 'Geist, Inter, sans-serif'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (view !== 'original') e.currentTarget.style.color = '#ffffff'
+                        }}
+                        onMouseLeave={(e) => {
+                          if (view !== 'original') e.currentTarget.style.color = '#8f8f8f'
+                        }}
                       >
                         Original
                       </button>
                       <button
                         onClick={() => setView('generated')}
-                        className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
-                          view === 'generated'
-                            ? 'bg-zinc-100 text-zinc-950'
-                            : 'text-zinc-400 hover:text-zinc-200'
-                        }`}
+                        className="px-2 py-0.5 text-[11px] font-medium transition"
+                        style={{
+                          borderRadius: '6px',
+                          backgroundColor: view === 'generated' ? '#ffffff' : 'transparent',
+                          color: view === 'generated' ? '#0a0a0a' : '#8f8f8f',
+                          fontFamily: 'Geist, Inter, sans-serif'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (view !== 'generated') e.currentTarget.style.color = '#ffffff'
+                        }}
+                        onMouseLeave={(e) => {
+                          if (view !== 'generated') e.currentTarget.style.color = '#8f8f8f'
+                        }}
                       >
                         AI Renovated
                       </button>
                       <button
                         onClick={() => setView('compare')}
-                        className={`rounded px-2 py-0.5 text-[11px] font-medium transition ${
-                          view === 'compare'
-                            ? 'bg-zinc-100 text-zinc-950'
-                            : 'text-zinc-400 hover:text-zinc-200'
-                        }`}
+                        className="px-2 py-0.5 text-[11px] font-medium transition"
+                        style={{
+                          borderRadius: '6px',
+                          backgroundColor: view === 'compare' ? '#ffffff' : 'transparent',
+                          color: view === 'compare' ? '#0a0a0a' : '#8f8f8f',
+                          fontFamily: 'Geist, Inter, sans-serif'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (view !== 'compare') e.currentTarget.style.color = '#ffffff'
+                        }}
+                        onMouseLeave={(e) => {
+                          if (view !== 'compare') e.currentTarget.style.color = '#8f8f8f'
+                        }}
                       >
                         Compare
                       </button>
@@ -280,27 +418,52 @@ export default function Dashboard() {
                   )}
                   <button
                     onClick={() => navigate(`/reports/${activeId}`)}
-                    className="rounded border border-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-200 transition hover:bg-zinc-800"
+                    className="px-2 py-0.5 text-[11px] font-medium transition"
+                    style={{
+                      borderRadius: '6px',
+                      border: '1px solid #2a2a2a',
+                      color: '#ffffff',
+                      backgroundColor: 'transparent',
+                      fontFamily: 'Geist, Inter, sans-serif'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1a1a1a'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     Reports
                   </button>
                   <button
                     onClick={() => setExpanded(true)}
                     title="Focus mode"
-                    className="rounded border border-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-200 transition hover:bg-zinc-800"
+                    className="px-2 py-0.5 text-[11px] font-medium transition"
+                    style={{
+                      borderRadius: '6px',
+                      border: '1px solid #2a2a2a',
+                      color: '#ffffff',
+                      backgroundColor: 'transparent',
+                      fontFamily: 'Geist, Inter, sans-serif'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1a1a1a'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     ⤢
                   </button>
                 </div>
               </header>
             )}
-            <div className="flex flex-1 min-h-0 flex-col bg-zinc-900/40">
+            <div 
+              className="flex flex-1 min-h-0 flex-col"
+              style={{ backgroundColor: '#0a0a0a' }}
+            >
               {view === 'generated' && generatedImage ? (
                 <div key="generated-view" className="flex flex-1 items-center justify-center overflow-auto p-6">
                   <img
                     src={imageUrl(generatedImage)}
                     alt="AI-generated renovation"
-                    className="max-h-full max-w-full rounded-xl border border-zinc-800 shadow-2xl"
+                    className="max-h-full max-w-full shadow-2xl"
+                    style={{
+                      borderRadius: '12px',
+                      border: '1px solid #1a1a1a'
+                    }}
                     loading="eager"
                   />
                 </div>
@@ -308,20 +471,38 @@ export default function Dashboard() {
                 <div key="compare-view" className="flex flex-1 items-center justify-center overflow-auto p-6">
                   <div className="grid w-full max-w-7xl grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="flex flex-col">
-                      <h3 className="mb-3 text-sm font-semibold text-zinc-400">Original</h3>
+                      <h3 
+                        className="mb-3 text-sm font-semibold"
+                        style={{ color: '#8f8f8f', fontFamily: 'Geist, Inter, sans-serif' }}
+                      >
+                        Original
+                      </h3>
                       <img
                         src={imageUrl(originalImage)}
                         alt="Original house"
-                        className="w-full rounded-xl border border-zinc-800 shadow-2xl"
+                        className="w-full shadow-2xl"
+                        style={{
+                          borderRadius: '12px',
+                          border: '1px solid #1a1a1a'
+                        }}
                         loading="eager"
                       />
                     </div>
                     <div className="flex flex-col">
-                      <h3 className="mb-3 text-sm font-semibold text-zinc-400">AI-Generated Renovation</h3>
+                      <h3 
+                        className="mb-3 text-sm font-semibold"
+                        style={{ color: '#8f8f8f', fontFamily: 'Geist, Inter, sans-serif' }}
+                      >
+                        AI-Generated Renovation
+                      </h3>
                       <img
                         src={imageUrl(generatedImage)}
                         alt="AI-generated renovation"
-                        className="w-full rounded-xl border border-zinc-800 shadow-2xl"
+                        className="w-full shadow-2xl"
+                        style={{
+                          borderRadius: '12px',
+                          border: '1px solid #1a1a1a'
+                        }}
                         loading="eager"
                       />
                     </div>
@@ -338,12 +519,29 @@ export default function Dashboard() {
             </div>
           </>
         ) : (
-          <div className="relative flex flex-1 items-center justify-center text-zinc-600">
+          <div 
+            className="relative flex flex-1 items-center justify-center"
+            style={{ color: '#6a6a6a' }}
+          >
             {!sidebarOpen && (
               <button
                 onClick={() => setSidebarOpen(true)}
                 title="Show project list"
-                className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-100"
+                className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center transition"
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #1a1a1a',
+                  backgroundColor: '#0f0f0f',
+                  color: '#8f8f8f'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#1a1a1a'
+                  e.currentTarget.style.color = '#ffffff'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#0f0f0f'
+                  e.currentTarget.style.color = '#8f8f8f'
+                }}
               >
                 <svg
                   width="16"
@@ -362,11 +560,21 @@ export default function Dashboard() {
             )}
             {projectLoading ? (
               <div className="text-center">
-                <div className="mb-3 h-10 w-10 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500 mx-auto" />
-                <p className="text-zinc-400">Loading project...</p>
+                <div 
+                  className="mb-3 h-10 w-10 animate-spin rounded-full border-4 mx-auto"
+                  style={{
+                    borderColor: '#2a2a2a',
+                    borderTopColor: '#ffffff'
+                  }}
+                />
+                <p style={{ color: '#8f8f8f', fontFamily: 'Geist, Inter, sans-serif' }}>
+                  Loading project...
+                </p>
               </div>
             ) : (
-              'Select or create a project to start'
+              <p style={{ fontFamily: 'Geist, Inter, sans-serif' }}>
+                Select or create a project to start
+              </p>
             )}
           </div>
         )}

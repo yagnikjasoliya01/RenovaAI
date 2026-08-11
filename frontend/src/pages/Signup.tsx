@@ -53,37 +53,130 @@ export default function Signup() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-4">
-      <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-zinc-100">RenovaAI</h1>
-          <p className="mt-2 text-zinc-400">Create your account</p>
-        </div>
+    <div 
+      className="h-screen overflow-hidden relative" 
+      style={{ 
+        backgroundColor: '#0a0a0a',
+        backgroundImage: `
+          radial-gradient(circle at 20% 20%, rgba(0, 112, 243, 0.08) 0%, transparent 50%),
+          radial-gradient(circle at 80% 80%, rgba(80, 227, 194, 0.06) 0%, transparent 50%),
+          linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.4) 100%)
+        `
+      }}
+    >
+      {/* Dot Grid Pattern */}
+      <div 
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: `radial-gradient(circle, rgba(255, 255, 255, 0.15) 1px, transparent 1px)`,
+          backgroundSize: '30px 30px'
+        }}
+      />
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-5 rounded-xl border border-zinc-800 bg-zinc-900 p-8"
+      {/* Logo Top-Left */}
+      <div className="absolute top-6 left-6 z-50">
+        <Link 
+          to="/"
+          style={{
+            fontFamily: 'Geist, Inter, Arial, sans-serif',
+            fontSize: '20px',
+            fontWeight: 600,
+            color: '#ffffff',
+            textDecoration: 'none'
+          }}
         >
-          {error && (
-            <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-sm text-red-400">
-              {error}
-            </div>
-          )}
+          RenovaAI
+        </Link>
+      </div>
+
+      <div className="relative flex h-full items-center justify-center px-4 z-10">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="mb-6 text-center">
+            <h1 
+              className="text-3xl font-semibold mb-2" 
+              style={{ 
+                fontFamily: 'Geist, Inter, Arial, sans-serif',
+                color: '#ffffff',
+                letterSpacing: '-1px',
+                fontWeight: 600
+              }}
+            >
+              Create your account
+            </h1>
+            <p 
+              className="text-sm" 
+              style={{ 
+                fontFamily: 'Geist, Inter, Arial, sans-serif', 
+                color: '#8f8f8f',
+                lineHeight: '20px'
+              }}
+            >
+              Start planning your renovation with AI
+            </p>
+          </div>
+
+          {/* Form Card */}
+          <div
+            className="p-6"
+            style={{
+              borderRadius: '16px',
+              backgroundColor: '#1a1a1a',
+              border: '1px solid #2a2a2a'
+            }}
+          >
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div 
+                className="rounded p-3 text-sm"
+                style={{
+                  backgroundColor: '#2a1010',
+                  border: '1px solid #4a1010',
+                  color: '#ff6b6b',
+                  fontFamily: 'Geist, Inter, sans-serif'
+                }}
+              >
+                {error}
+              </div>
+            )}
 
           <div>
             <label
               htmlFor="username"
-              className="block text-sm font-medium text-zinc-300"
+              className="block text-sm font-medium mb-2"
+                style={{ 
+                  fontFamily: 'Geist, Inter, sans-serif',
+                  color: '#ffffff',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  letterSpacing: '-0.28px'
+                }}
             >
               Username
             </label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                className="w-full px-3 py-2.5 text-sm outline-none transition"
+                style={{
+                  borderRadius: '10px',
+                  backgroundColor: '#0a0a0a',
+                  color: '#ffffff',
+                  border: '1px solid #2a2a2a',
+                  fontFamily: 'Geist, Inter, sans-serif',
+                  lineHeight: '20px'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#0070f3'
+                  e.target.style.boxShadow = '0 0 0 1px #0070f3'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#2a2a2a'
+                  e.target.style.boxShadow = 'none'
+                }}
               placeholder="johndoe"
             />
           </div>
@@ -91,7 +184,14 @@ export default function Signup() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-zinc-300"
+              className="block text-sm font-medium mb-2"
+                style={{ 
+                  fontFamily: 'Geist, Inter, sans-serif',
+                  color: '#ffffff',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  letterSpacing: '-0.28px'
+                }}
             >
               Email
             </label>
@@ -101,7 +201,23 @@ export default function Signup() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-2 w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                className="w-full px-3 py-2.5 text-sm outline-none transition"
+                style={{
+                  borderRadius: '10px',
+                  backgroundColor: '#0a0a0a',
+                  color: '#ffffff',
+                  border: '1px solid #2a2a2a',
+                  fontFamily: 'Geist, Inter, sans-serif',
+                  lineHeight: '20px'
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#0070f3'
+                  e.target.style.boxShadow = '0 0 0 1px #0070f3'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#2a2a2a'
+                  e.target.style.boxShadow = 'none'
+                }}
               placeholder="you@example.com"
             />
           </div>
@@ -109,7 +225,14 @@ export default function Signup() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-zinc-300"
+              className="block text-sm font-medium mb-2"
+                style={{ 
+                  fontFamily: 'Geist, Inter, sans-serif',
+                  color: '#ffffff',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  letterSpacing: '-0.28px'
+                }}
             >
               Password
             </label>
@@ -127,7 +250,10 @@ export default function Signup() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition hover:text-zinc-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 transition"
+                style={{ color: '#6a6a6a' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#6a6a6a'}
               >
                 {showPassword ? (
                   <svg
@@ -171,7 +297,14 @@ export default function Signup() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium text-zinc-300"
+              className="block text-sm font-medium mb-2"
+                style={{ 
+                  fontFamily: 'Geist, Inter, sans-serif',
+                  color: '#ffffff',
+                  fontWeight: 500,
+                  lineHeight: '20px',
+                  letterSpacing: '-0.28px'
+                }}
             >
               Confirm Password
             </label>
@@ -189,7 +322,10 @@ export default function Signup() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 transition hover:text-zinc-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 transition"
+                style={{ color: '#6a6a6a' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#ffffff'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#6a6a6a'}
               >
                 {showConfirmPassword ? (
                   <svg
@@ -225,26 +361,74 @@ export default function Signup() {
                       d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                     />
                   </svg>
-                )}
-              </button>
+                  )}
+                </button>
+              </div>
+              {/* Password Match Indicator */}
+              {confirmPassword && password && password !== confirmPassword && (
+                <p 
+                  className="text-xs mt-1"
+                  style={{
+                    color: '#ff6b6b',
+                    fontFamily: 'Geist, Inter, sans-serif'
+                  }}
+                >
+                  Passwords do not match
+                </p>
+              )}
+              {confirmPassword && password && password === confirmPassword && (
+                <p 
+                  className="text-xs mt-1"
+                  style={{
+                    color: '#51cf66',
+                    fontFamily: 'Geist, Inter, sans-serif'
+                  }}
+                >
+                  Passwords match ✓
+                </p>
+              )}
             </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full px-5 py-2.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+              style={{
+                borderRadius: '10px',
+                backgroundColor: loading ? '#3a3a3a' : '#ffffff',
+                color: loading ? '#6a6a6a' : '#0a0a0a',
+                fontFamily: 'Geist, Inter, sans-serif',
+                fontWeight: 500,
+                lineHeight: '20px'
+              }}
+              onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#e5e5e5')}
+              onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#ffffff')}
+            >
+              {loading ? 'Creating account...' : 'Sign Up'}
+            </button>
+
+            <p 
+              className="text-center text-sm"
+              style={{ 
+                fontFamily: 'Geist, Inter, sans-serif',
+                color: '#6a6a6a',
+                lineHeight: '20px'
+              }}
+            >
+              Already have an account?{' '}
+              <Link 
+                to="/login" 
+                className="font-medium transition"
+                style={{ color: '#0070f3' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = '#0761d1'}
+                onMouseLeave={(e) => e.currentTarget.style.color = '#0070f3'}
+              >
+                Sign in
+              </Link>
+            </p>
+          </form>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {loading ? 'Creating account...' : 'Sign Up'}
-          </button>
-
-          <p className="text-center text-sm text-zinc-400">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-blue-400 hover:text-blue-300">
-              Sign in
-            </Link>
-          </p>
-        </form>
+        </div>
       </div>
     </div>
   )

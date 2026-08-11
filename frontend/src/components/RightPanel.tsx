@@ -13,17 +13,33 @@ export default function RightPanel() {
   const [tab, setTab] = useState<Tab>('cost')
 
   return (
-    <aside className="flex min-h-0 flex-col overflow-hidden border-l border-zinc-800 bg-zinc-900/70">
-      <div className="flex h-9 shrink-0 items-center border-b border-zinc-800">
+    <aside 
+      className="flex min-h-0 flex-col overflow-hidden"
+      style={{
+        borderLeft: '1px solid #1a1a1a',
+        backgroundColor: '#0f0f0f'
+      }}
+    >
+      <div 
+        className="flex h-9 shrink-0 items-center"
+        style={{ borderBottom: '1px solid #1a1a1a' }}
+      >
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`h-full flex-1 text-xs font-medium transition ${
-              tab === t.id
-                ? 'border-b-2 border-zinc-100 text-zinc-100'
-                : 'border-b-2 border-transparent text-zinc-500 hover:text-zinc-200'
-            }`}
+            className="h-full flex-1 text-xs font-medium transition"
+            style={{
+              borderBottom: tab === t.id ? '2px solid #ffffff' : '2px solid transparent',
+              color: tab === t.id ? '#ffffff' : '#6a6a6a',
+              fontFamily: 'Geist, Inter, sans-serif'
+            }}
+            onMouseEnter={(e) => {
+              if (tab !== t.id) e.currentTarget.style.color = '#ffffff'
+            }}
+            onMouseLeave={(e) => {
+              if (tab !== t.id) e.currentTarget.style.color = '#6a6a6a'
+            }}
           >
             {t.label}
           </button>

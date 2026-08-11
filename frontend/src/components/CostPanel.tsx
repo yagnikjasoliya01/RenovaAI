@@ -61,12 +61,26 @@ export default function CostPanel() {
 
   return (
     <section className="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <header className="flex h-10 shrink-0 items-center justify-between border-b border-zinc-800 px-3">
-        <h2 className="text-sm font-semibold text-zinc-100">Cost estimate</h2>
+      <header 
+        className="flex h-10 shrink-0 items-center justify-between px-3"
+        style={{ borderBottom: '1px solid #1a1a1a' }}
+      >
+        <h2 
+          className="text-sm font-semibold"
+          style={{ color: '#ffffff', fontFamily: 'Geist, Inter, sans-serif' }}
+        >
+          Cost estimate
+        </h2>
         <div className="flex items-center gap-2">
           {hasScale && (
-            <span className="flex items-center gap-1.5 text-xs text-zinc-500">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+            <span 
+              className="flex items-center gap-1.5 text-xs"
+              style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+            >
+              <span 
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: '#fbbf24' }}
+              />
               {scaleFt} ft / {scalePx!.toFixed(0)} px
             </span>
           )}
@@ -74,7 +88,14 @@ export default function CostPanel() {
             onClick={() => setRefreshKey((k) => k + 1)}
             title="Refresh estimate"
             disabled={!canEstimate}
-            className="flex h-8 w-8 items-center justify-center text-zinc-500 transition hover:text-zinc-200 disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-8 w-8 items-center justify-center transition disabled:cursor-not-allowed disabled:opacity-30"
+            style={{ color: '#6a6a6a' }}
+            onMouseEnter={(e) => {
+              if (canEstimate) e.currentTarget.style.color = '#ffffff'
+            }}
+            onMouseLeave={(e) => {
+              if (canEstimate) e.currentTarget.style.color = '#6a6a6a'
+            }}
           >
             ↻
           </button>
@@ -83,18 +104,34 @@ export default function CostPanel() {
 
       <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto p-3">
         {!activeId && (
-          <p className="text-center text-sm text-zinc-500">
+          <p 
+            className="text-center text-sm"
+            style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+          >
             Open a project to see a cost breakdown
           </p>
         )}
 
         {activeId && !hasScale && (
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3 text-center">
-            <p className="text-sm text-zinc-300">
+          <div 
+            className="p-3 text-center"
+            style={{
+              borderRadius: '12px',
+              border: '1px solid #1a1a1a',
+              backgroundColor: '#0f0f0f'
+            }}
+          >
+            <p 
+              className="text-sm"
+              style={{ color: '#a1a1a1', fontFamily: 'Geist, Inter, sans-serif' }}
+            >
               Set a reference measurement first
             </p>
-            <p className="mt-1 text-xs leading-relaxed text-zinc-500">
-              Use the <span className="font-medium text-zinc-300">Measure</span>{' '}
+            <p 
+              className="mt-1 text-xs leading-relaxed"
+              style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+            >
+              Use the <span style={{ fontWeight: 500, color: '#a1a1a1' }}>Measure</span>{' '}
               tool (↔) on the canvas, then click two points of a known length
               and enter the distance in feet.
             </p>
@@ -102,18 +139,35 @@ export default function CostPanel() {
         )}
 
         {activeId && hasScale && regions.length === 0 && (
-          <p className="text-center text-sm text-zinc-500">
+          <p 
+            className="text-center text-sm"
+            style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+          >
             No regions yet. Draw walls and apply materials to build the
             estimate.
           </p>
         )}
 
         {loading && !est && (
-          <p className="text-center text-sm text-zinc-500">Estimating…</p>
+          <p 
+            className="text-center text-sm"
+            style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+          >
+            Estimating…
+          </p>
         )}
 
         {error && !est && (
-          <p className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center text-xs text-red-400">
+          <p 
+            className="p-3 text-center text-xs"
+            style={{
+              borderRadius: '10px',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              color: '#ff6b6b',
+              fontFamily: 'Geist, Inter, sans-serif'
+            }}
+          >
             {error}
           </p>
         )}
@@ -126,25 +180,34 @@ export default function CostPanel() {
               return (
                 <div
                   key={i}
-                  className={`rounded-xl border px-3 py-2 ${
-                    opening
-                      ? 'border-emerald-500/20 bg-emerald-500/5'
-                      : 'border-zinc-800 bg-zinc-900/60'
-                  }`}
+                  className="px-3 py-2"
+                  style={{
+                    borderRadius: '12px',
+                    border: opening ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid #1a1a1a',
+                    backgroundColor: opening ? 'rgba(16, 185, 129, 0.05)' : '#0f0f0f'
+                  }}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="min-w-0 truncate text-sm font-medium text-zinc-100">
+                    <span 
+                      className="min-w-0 truncate text-sm font-medium"
+                      style={{ color: '#ffffff', fontFamily: 'Geist, Inter, sans-serif' }}
+                    >
                       {LABEL_TEXT[r.label as keyof typeof LABEL_TEXT] ?? r.label}
                     </span>
                     <span
-                      className={`shrink-0 text-sm font-semibold tabular-nums ${
-                        opening ? 'text-emerald-400' : 'text-zinc-100'
-                      }`}
+                      className="shrink-0 text-sm font-semibold tabular-nums"
+                      style={{ 
+                        color: opening ? '#10b981' : '#ffffff',
+                        fontFamily: 'Geist, Inter, sans-serif'
+                      }}
                     >
                       {inr(r.total_cost)}
                     </span>
                   </div>
-                  <div className="mt-0.5 truncate text-xs text-zinc-500">
+                  <div 
+                    className="mt-0.5 truncate text-xs"
+                    style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+                  >
                     {opening
                       ? 'Opening — subtracted from the surface around it'
                       : r.material_name
@@ -152,7 +215,10 @@ export default function CostPanel() {
                         : `No material · ${r.area_sqft.toFixed(1)} sq ft`}
                   </div>
                   {hasCost && (
-                    <div className="mt-1 flex items-center justify-between text-[11px] tabular-nums text-zinc-500">
+                    <div 
+                      className="mt-1 flex items-center justify-between text-[11px] tabular-nums"
+                      style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+                    >
                       <span>
                         Material {inr(r.material_cost)} · Labor{' '}
                         {inr(r.labor_cost)}
@@ -166,16 +232,36 @@ export default function CostPanel() {
               )
             })}
 
-            <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 px-3 py-2.5">
-              <div className="flex items-center justify-between text-sm text-zinc-400">
+            <div 
+              className="px-3 py-2.5"
+              style={{
+                borderRadius: '12px',
+                border: '1px solid #1a1a1a',
+                backgroundColor: '#0f0f0f'
+              }}
+            >
+              <div 
+                className="flex items-center justify-between text-sm"
+                style={{ color: '#8f8f8f', fontFamily: 'Geist, Inter, sans-serif' }}
+              >
                 <span>Material</span>
                 <span className="tabular-nums">{inr(est.totals.material)}</span>
               </div>
-              <div className="mt-1 flex items-center justify-between text-sm text-zinc-400">
+              <div 
+                className="mt-1 flex items-center justify-between text-sm"
+                style={{ color: '#8f8f8f', fontFamily: 'Geist, Inter, sans-serif' }}
+              >
                 <span>Labor</span>
                 <span className="tabular-nums">{inr(est.totals.labor)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between border-t border-zinc-800 pt-2 text-base font-semibold text-zinc-100">
+              <div 
+                className="mt-2 flex items-center justify-between pt-2 text-base font-semibold"
+                style={{ 
+                  borderTop: '1px solid #1a1a1a',
+                  color: '#ffffff',
+                  fontFamily: 'Geist, Inter, sans-serif'
+                }}
+              >
                 <span>Grand total</span>
                 <span className="tabular-nums">
                   {inr(est.totals.grand_total)}

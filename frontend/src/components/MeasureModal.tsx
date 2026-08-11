@@ -25,9 +25,12 @@ export default function MeasureModal({ distPx, onConfirm, onCancel }: Props) {
 
   return (
     <Modal title="Set reference length" onClose={onCancel}>
-      <p className="mt-2 text-sm text-zinc-400">
+      <p 
+        className="mt-2 text-sm"
+        style={{ color: '#8f8f8f', fontFamily: 'Geist, Inter, sans-serif' }}
+      >
         The selected line is{' '}
-        <span className="font-semibold text-zinc-100">
+        <span style={{ fontWeight: 600, color: '#ffffff' }}>
           {distPx.toFixed(0)} px
         </span>
         . Enter its real-world length in feet:
@@ -44,20 +47,51 @@ export default function MeasureModal({ distPx, onConfirm, onCancel }: Props) {
           min="0.1"
           step="0.1"
           inputMode="decimal"
-          className="flex-1 rounded-xl border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-zinc-500"
+          className="flex-1 px-3 py-2 text-sm outline-none"
+          style={{
+            borderRadius: '10px',
+            border: '1px solid #2a2a2a',
+            backgroundColor: '#1a1a1a',
+            color: '#ffffff',
+            fontFamily: 'Geist, Inter, sans-serif'
+          }}
+          onFocus={(e) => e.currentTarget.style.borderColor = '#6366f1'}
+          onBlur={(e) => e.currentTarget.style.borderColor = '#2a2a2a'}
         />
-        <span className="text-sm text-zinc-500">ft</span>
+        <span 
+          className="text-sm"
+          style={{ color: '#6a6a6a', fontFamily: 'Geist, Inter, sans-serif' }}
+        >
+          ft
+        </span>
       </div>
       <div className="mt-5 flex justify-end gap-2">
         <button
           onClick={onCancel}
-          className="rounded-xl border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-200 transition hover:bg-zinc-800"
+          className="px-4 py-2 text-sm font-medium transition"
+          style={{
+            borderRadius: '10px',
+            border: '1px solid #2a2a2a',
+            color: '#ffffff',
+            backgroundColor: 'transparent',
+            fontFamily: 'Geist, Inter, sans-serif'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1a1a1a'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
           Cancel
         </button>
         <button
           onClick={submit}
-          className="rounded-xl bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-950 transition hover:bg-zinc-300"
+          className="px-4 py-2 text-sm font-medium transition"
+          style={{
+            borderRadius: '10px',
+            backgroundColor: '#ffffff',
+            color: '#0a0a0a',
+            fontFamily: 'Geist, Inter, sans-serif'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e5e5e5'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
         >
           Save
         </button>

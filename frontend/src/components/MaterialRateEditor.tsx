@@ -104,11 +104,29 @@ export default function MaterialRateEditor({ onClose }: Props) {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div className="rounded-lg bg-zinc-900 p-8 border border-zinc-800">
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
+      >
+        <div 
+          className="p-8"
+          style={{
+            borderRadius: '12px',
+            backgroundColor: '#0f0f0f',
+            border: '1px solid #1a1a1a'
+          }}
+        >
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500" />
-            <p className="text-zinc-300">Loading materials...</p>
+            <div 
+              className="h-8 w-8 animate-spin rounded-full border-4"
+              style={{
+                borderColor: '#2a2a2a',
+                borderTopColor: '#ffffff'
+              }}
+            />
+            <p style={{ color: '#a1a1a1', fontFamily: 'Geist, Inter, sans-serif' }}>
+              Loading materials...
+            </p>
           </div>
         </div>
       </div>
@@ -116,17 +134,49 @@ export default function MaterialRateEditor({ onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
+    >
+      <div 
+        className="w-full max-w-4xl max-h-[90vh] overflow-hidden"
+        style={{
+          borderRadius: '16px',
+          border: '1px solid #1a1a1a',
+          backgroundColor: '#0f0f0f'
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 p-4">
+        <div 
+          className="flex items-center justify-between p-4"
+          style={{ borderBottom: '1px solid #1a1a1a' }}
+        >
           <div>
-            <h2 className="text-lg font-semibold text-zinc-100">Material Rate Editor</h2>
-            <p className="text-sm text-zinc-400">Customize material and labor costs</p>
+            <h2 
+              className="text-lg font-semibold"
+              style={{ color: '#ffffff', fontFamily: 'Geist, Inter, sans-serif' }}
+            >
+              Material Rate Editor
+            </h2>
+            <p 
+              className="text-sm"
+              style={{ color: '#8f8f8f', fontFamily: 'Geist, Inter, sans-serif' }}
+            >
+              Customize material and labor costs
+            </p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-md p-2 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
+            className="p-2 transition"
+            style={{ borderRadius: '8px', color: '#8f8f8f' }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#1a1a1a'
+              e.currentTarget.style.color = '#ffffff'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.color = '#8f8f8f'
+            }}
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -137,39 +187,67 @@ export default function MaterialRateEditor({ onClose }: Props) {
         {/* Table */}
         <div className="max-h-[60vh] overflow-y-auto">
           <table className="w-full">
-            <thead className="sticky top-0 bg-zinc-800 text-left text-sm font-semibold text-zinc-300 z-10">
+            <thead 
+              className="sticky top-0 text-left text-sm font-semibold z-10"
+              style={{ 
+                backgroundColor: '#1a1a1a',
+                color: '#a1a1a1',
+                fontFamily: 'Geist, Inter, sans-serif'
+              }}
+            >
               <tr>
-                <th className="p-3 border-b border-zinc-700">Material</th>
-                <th className="p-3 border-b border-zinc-700">Category</th>
-                <th className="p-3 border-b border-zinc-700">Unit</th>
-                <th className="p-3 text-right border-b border-zinc-700">Material Rate (₹)</th>
-                <th className="p-3 text-right border-b border-zinc-700">Labor Rate (₹)</th>
+                <th className="p-3" style={{ borderBottom: '1px solid #2a2a2a' }}>Material</th>
+                <th className="p-3" style={{ borderBottom: '1px solid #2a2a2a' }}>Category</th>
+                <th className="p-3" style={{ borderBottom: '1px solid #2a2a2a' }}>Unit</th>
+                <th className="p-3 text-right" style={{ borderBottom: '1px solid #2a2a2a' }}>Material Rate (₹)</th>
+                <th className="p-3 text-right" style={{ borderBottom: '1px solid #2a2a2a' }}>Labor Rate (₹)</th>
               </tr>
             </thead>
-            <tbody className="text-sm">
+            <tbody 
+              className="text-sm"
+              style={{ fontFamily: 'Geist, Inter, sans-serif' }}
+            >
               {materials.map((material, index) => (
                 <tr
                   key={material.id}
-                  className={`border-b border-zinc-800 transition-colors ${
-                    material.is_custom 
-                      ? 'bg-blue-500/5 hover:bg-blue-500/10' 
+                  className="transition-colors"
+                  style={{
+                    borderBottom: '1px solid #1a1a1a',
+                    backgroundColor: material.is_custom 
+                      ? 'rgba(99, 102, 241, 0.05)' 
                       : index % 2 === 0 
-                        ? 'hover:bg-zinc-800/50' 
-                        : 'bg-zinc-900/50 hover:bg-zinc-800/50'
-                  }`}
+                        ? 'transparent' 
+                        : '#0a0a0a'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = material.is_custom ? 'rgba(99, 102, 241, 0.1)' : '#1a1a1a'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = material.is_custom 
+                      ? 'rgba(99, 102, 241, 0.05)' 
+                      : index % 2 === 0 
+                        ? 'transparent' 
+                        : '#0a0a0a'
+                  }}
                 >
                   <td className="p-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-zinc-100">{material.name}</span>
+                      <span style={{ color: '#ffffff' }}>{material.name}</span>
                       {material.is_custom && (
-                        <span className="rounded-full bg-blue-500/20 px-2 py-0.5 text-xs text-blue-400">
+                        <span 
+                          className="rounded-full px-2 py-0.5 text-xs"
+                          style={{
+                            backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                            color: '#a5b4fc'
+                          }}
+                        >
                           Custom
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="p-3 text-zinc-400 capitalize">{material.category}</td>
-                  <td className="p-3 text-zinc-400">{material.unit}</td>
+                  <td className="p-3 capitalize" style={{ color: '#8f8f8f' }}>{material.category}</td>
+                  <td className="p-3" style={{ color: '#8f8f8f' }}>{material.unit}</td>
                   <td className="p-3">
                     <input
                       type="number"
@@ -178,7 +256,22 @@ export default function MaterialRateEditor({ onClose }: Props) {
                       value={getCurrentRate(material, 'rate')}
                       onChange={(e) => handleRateChange(material.id, 'rate', e.target.value)}
                       disabled={saving}
-                      className="w-24 rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-right text-zinc-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="w-24 px-2 py-1 text-right outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderRadius: '6px',
+                        border: '1px solid #2a2a2a',
+                        backgroundColor: '#0a0a0a',
+                        color: '#ffffff',
+                        fontFamily: 'Geist, Inter, sans-serif'
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = '#6366f1'
+                        e.currentTarget.style.boxShadow = '0 0 0 1px #6366f1'
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = '#2a2a2a'
+                        e.currentTarget.style.boxShadow = 'none'
+                      }}
                     />
                   </td>
                   <td className="p-3">
@@ -189,7 +282,22 @@ export default function MaterialRateEditor({ onClose }: Props) {
                       value={getCurrentRate(material, 'labor_rate')}
                       onChange={(e) => handleRateChange(material.id, 'labor_rate', e.target.value)}
                       disabled={saving}
-                      className="w-24 rounded border border-zinc-700 bg-zinc-800 px-2 py-1 text-right text-zinc-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="w-24 px-2 py-1 text-right outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderRadius: '6px',
+                        border: '1px solid #2a2a2a',
+                        backgroundColor: '#0a0a0a',
+                        color: '#ffffff',
+                        fontFamily: 'Geist, Inter, sans-serif'
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = '#6366f1'
+                        e.currentTarget.style.boxShadow = '0 0 0 1px #6366f1'
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = '#2a2a2a'
+                        e.currentTarget.style.boxShadow = 'none'
+                      }}
                     />
                   </td>
                 </tr>
@@ -199,11 +307,27 @@ export default function MaterialRateEditor({ onClose }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between border-t border-zinc-800 p-4">
+        <div 
+          className="flex items-center justify-between p-4"
+          style={{ borderTop: '1px solid #1a1a1a' }}
+        >
           <button
             onClick={() => setShowResetConfirm(true)}
             disabled={saving}
-            className="rounded-md border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium transition disabled:opacity-50"
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #2a2a2a',
+              color: '#a1a1a1',
+              backgroundColor: 'transparent',
+              fontFamily: 'Geist, Inter, sans-serif'
+            }}
+            onMouseEnter={(e) => {
+              if (!saving) e.currentTarget.style.backgroundColor = '#1a1a1a'
+            }}
+            onMouseLeave={(e) => {
+              if (!saving) e.currentTarget.style.backgroundColor = 'transparent'
+            }}
           >
             Reset to Defaults
           </button>
@@ -211,14 +335,39 @@ export default function MaterialRateEditor({ onClose }: Props) {
             <button
               onClick={onClose}
               disabled={saving}
-              className="rounded-md border border-zinc-700 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-800 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium transition disabled:opacity-50"
+              style={{
+                borderRadius: '8px',
+                border: '1px solid #2a2a2a',
+                color: '#a1a1a1',
+                backgroundColor: 'transparent',
+                fontFamily: 'Geist, Inter, sans-serif'
+              }}
+              onMouseEnter={(e) => {
+                if (!saving) e.currentTarget.style.backgroundColor = '#1a1a1a'
+              }}
+              onMouseLeave={(e) => {
+                if (!saving) e.currentTarget.style.backgroundColor = 'transparent'
+              }}
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={!hasChanges || saving}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium transition disabled:opacity-50"
+              style={{
+                borderRadius: '8px',
+                backgroundColor: (!hasChanges || saving) ? '#2a2a2a' : '#6366f1',
+                color: '#ffffff',
+                fontFamily: 'Geist, Inter, sans-serif'
+              }}
+              onMouseEnter={(e) => {
+                if (hasChanges && !saving) e.currentTarget.style.backgroundColor = '#4f46e5'
+              }}
+              onMouseLeave={(e) => {
+                if (hasChanges && !saving) e.currentTarget.style.backgroundColor = '#6366f1'
+              }}
             >
               {saving ? 'Saving...' : 'Save Changes'}
             </button>

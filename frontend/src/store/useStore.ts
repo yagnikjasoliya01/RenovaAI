@@ -21,6 +21,8 @@ interface ProjectState {
   chatByProject: Record<number, ChatMessage[]>
   past: Snapshot[]
   future: Snapshot[]
+  projectsLoading: boolean
+  projectLoading: boolean
   setActive: (id: number | null) => void
   setProjectData: (data: {
     name: string
@@ -44,6 +46,8 @@ interface ProjectState {
   resetHistory: () => void
   setMaterials: (materials: Material[]) => void
   setProjects: (projects: ProjectMeta[]) => void
+  setProjectsLoading: (loading: boolean) => void
+  setProjectLoading: (loading: boolean) => void
   upsertProjectMeta: (meta: ProjectMeta) => void
   removeProjectMeta: (id: number) => void
   chatPush: (projectId: number, msg: ChatMessage) => void
@@ -64,6 +68,8 @@ const initialState = {
   chatByProject: {},
   past: [],
   future: [],
+  projectsLoading: false,
+  projectLoading: false,
 }
 
 const MAX_HISTORY = 50
@@ -153,6 +159,8 @@ export const useStore = create<ProjectState>((set) => ({
   resetHistory: () => set({ past: [], future: [] }),
   setMaterials: (materials) => set({ materials }),
   setProjects: (projects) => set({ projects }),
+  setProjectsLoading: (projectsLoading) => set({ projectsLoading }),
+  setProjectLoading: (projectLoading) => set({ projectLoading }),
   upsertProjectMeta: (meta) =>
     set((s) => {
       const exists = s.projects.some((p) => p.id === meta.id)

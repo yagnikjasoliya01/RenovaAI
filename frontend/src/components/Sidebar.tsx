@@ -18,6 +18,7 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
   const navigate = useNavigate()
   const { signOut, user } = useAuth()
   const projects = useStore((s) => s.projects)
+  const projectsLoading = useStore((s) => s.projectsLoading)
   const upsertProjectMeta = useStore((s) => s.upsertProjectMeta)
   const removeProjectMeta = useStore((s) => s.removeProjectMeta)
   const [editingId, setEditingId] = useState<number | null>(null)
@@ -101,12 +102,18 @@ export default function Sidebar({ activeId, onOpen, onNew, onClose, open }: Prop
           </button>
         </div>
         <nav className="flex-1 overflow-x-auto overflow-y-auto px-1.5 pb-2 pt-1.5">
-        {projects.length === 0 && (
+        {projectsLoading && (
+          <div className="px-2 py-3 text-center">
+            <div className="mb-2 h-4 w-4 animate-spin rounded-full border-2 border-zinc-700 border-t-blue-500 mx-auto" />
+            <p className="text-[10px] text-zinc-500">Loading projects...</p>
+          </div>
+        )}
+        {!projectsLoading && projects.length === 0 && (
           <p className="px-2 py-3 text-center text-[10px] text-zinc-500">
             No projects yet
           </p>
         )}
-        {projects.map((p) => {
+        {!projectsLoading && projects.map((p) => {
           const active = p.id === activeId
           return (
             <div

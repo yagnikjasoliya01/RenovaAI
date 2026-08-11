@@ -22,11 +22,14 @@ export default function Dashboard() {
   const setMaterials = useStore((s) => s.setMaterials)
   const setChat = useStore((s) => s.setChat)
   const resetHistory = useStore((s) => s.resetHistory)
+  const setProjectsLoading = useStore((s) => s.setProjectsLoading)
+  const setProjectLoading = useStore((s) => s.setProjectLoading)
   const activeId = useStore((s) => s.activeId)
   const originalImage = useStore((s) => s.originalImage)
   const generatedImage = useStore((s) => s.generatedImage)
   const regions = useStore((s) => s.regions)
   const projectName = useStore((s) => s.projectName)
+  const projectLoading = useStore((s) => s.projectLoading)
   const [error, setError] = useState('')
   const [showNew, setShowNew] = useState(false)
   const [view, setView] = useState<'original' | 'generated' | 'compare'>('original')
@@ -41,36 +44,47 @@ export default function Dashboard() {
     // Wait for auth to be ready before making API calls
     if (authLoading) return
 
+    setProjectsLoading(true)
     listProjects()
-      .then(setProjects)
-      .catch((err: unknown) =>
-        setError(err instanceof Error ? err.message : 'Failed to load projects'),
-      )
+      .then((projects) => {
+        setProjects(projects)
+        setProjectsLoading(false)
+      })
+      .catch((err: unknown) => {
+        setError(err instanceof Error ? err.message : 'Failed to load projects')
+        setProjectsLoading(false)
+      })
     getMaterials().then(setMaterials).catch(() => undefined)
-  }, [authLoading, setProjects, setMaterials])
+  }, [authLoading, setProjects, setMaterials, setProjectsLoading])
 
   useEffect(() => {
     // Wait for auth to be ready before loading project
     if (authLoading) return
 
     if (id) {
+      setProjectLoading(true)
+      setError('') // Clear previous errors
+      
       getProject(id)
         .then((p) => {
           setActive(id)
           setProjectData(p)
           resetHistory()
           setView(p.generated_image ? 'generated' : 'original')
+          setProjectLoading(false)
         })
-        .catch((err: unknown) =>
-          setError(err instanceof Error ? err.message : 'Failed to load project'),
-        )
+        .catch((err: unknown) => {
+          setError(err instanceof Error ? err.message : 'Failed to load project')
+          setProjectLoading(false)
+        })
       getProjectChat(id)
         .then((msgs) => setChat(id, msgs))
         .catch(() => undefined)
     } else {
       setActive(null)
+      setProjectLoading(false)
     }
-  }, [authLoading, id, setActive, setProjectData, setChat, resetHistory])
+  }, [authLoading, id, setActive, setProjectData, setChat, resetHistory, setProjectLoading])
 
   // Auto-switch to compare view when new image is generated
   useEffect(() => {
@@ -78,6 +92,18 @@ export default function Dashboard() {
       setView('compare')
     }
   }, [generatedImage])
+
+  // Preload images for smooth view switching
+  useEffect(() => {
+    if (originalImage) {
+      const img = new Image()
+      img.src = imageUrl(originalImage)
+    }
+    if (generatedImage) {
+      const img = new Image()
+      img.src = imageUrl(generatedImage)
+    }
+  }, [originalImage, generatedImage])
 
   function openProject(pid: number) {
     navigate(`/studio/${pid}`)
@@ -87,8 +113,18 @@ export default function Dashboard() {
     <div
       className={`grid h-screen overflow-hidden ${
         expanded ? 'grid-cols-1' : 'grid-cols-[auto_1fr_360px]'
-      } bg-zinc-950 text-zinc-100`}
+      } bg-zinc-950 text-zinc-100 relative`}
     >
+      {/* Full-page blur loader when switching projects */}
+      {projectLoading && id && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-zinc-950/80 backdrop-blur-sm">
+          <div className="text-center">
+            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500 mx-auto" />
+            <p className="text-zinc-300 text-sm font-medium">Loading project...</p>
+          </div>
+        </div>
+      )}
+
       {!expanded && (
         <Sidebar
           activeId={activeId}
@@ -260,15 +296,16 @@ export default function Dashboard() {
             )}
             <div className="flex flex-1 min-h-0 flex-col bg-zinc-900/40">
               {view === 'generated' && generatedImage ? (
-                <div className="flex flex-1 items-center justify-center overflow-auto p-6">
+                <div key="generated-view" className="flex flex-1 items-center justify-center overflow-auto p-6">
                   <img
                     src={imageUrl(generatedImage)}
                     alt="AI-generated renovation"
                     className="max-h-full max-w-full rounded-xl border border-zinc-800 shadow-2xl"
+                    loading="eager"
                   />
                 </div>
               ) : view === 'compare' && generatedImage ? (
-                <div className="flex flex-1 items-center justify-center overflow-auto p-6">
+                <div key="compare-view" className="flex flex-1 items-center justify-center overflow-auto p-6">
                   <div className="grid w-full max-w-7xl grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="flex flex-col">
                       <h3 className="mb-3 text-sm font-semibold text-zinc-400">Original</h3>
@@ -276,6 +313,7 @@ export default function Dashboard() {
                         src={imageUrl(originalImage)}
                         alt="Original house"
                         className="w-full rounded-xl border border-zinc-800 shadow-2xl"
+                        loading="eager"
                       />
                     </div>
                     <div className="flex flex-col">
@@ -284,12 +322,14 @@ export default function Dashboard() {
                         src={imageUrl(generatedImage)}
                         alt="AI-generated renovation"
                         className="w-full rounded-xl border border-zinc-800 shadow-2xl"
+                        loading="eager"
                       />
                     </div>
                   </div>
                 </div>
               ) : (
                 <CanvasEditor
+                  key={`canvas-${activeId}`}
                   expanded={expanded}
                   regionsOpen={regionsOpen}
                   onToggleRegions={() => setRegionsOpen((v) => !v)}
@@ -320,7 +360,14 @@ export default function Dashboard() {
                 </svg>
               </button>
             )}
-            {id ? 'Loading project...' : 'Select or create a project to start'}
+            {projectLoading ? (
+              <div className="text-center">
+                <div className="mb-3 h-10 w-10 animate-spin rounded-full border-4 border-zinc-700 border-t-blue-500 mx-auto" />
+                <p className="text-zinc-400">Loading project...</p>
+              </div>
+            ) : (
+              'Select or create a project to start'
+            )}
           </div>
         )}
       </main>

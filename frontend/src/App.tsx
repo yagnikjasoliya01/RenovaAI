@@ -5,6 +5,7 @@ import Report from './pages/Report'
 import ReportsList from './pages/ReportsList'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import VerifyEmail from './pages/VerifyEmail'
 import ErrorBoundary from './components/ErrorBoundary'
 import { useAuth } from './context/AuthContext'
 
@@ -59,6 +60,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/" element={<Navigate to="/studio" replace />} />
           <Route
             path="/studio"
